@@ -3,6 +3,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'react-use';
+import Image from 'next/image';
 
 import { RoomSettings } from '@/components/room-settings';
 import { ShareButton } from '@/components/share-button';
@@ -11,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from './ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { VisibilitySelector } from './visibility-selector';
-import { MessageSquarePlus, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 interface ChatHeaderProps {
   memberCount?: number;
@@ -40,7 +41,9 @@ export function ChatHeader({ memberCount = 24 }: ChatHeaderProps) {
                   router.refresh();
                 }}
               >
-                <MessageSquarePlus className={isMobile ? "h-4 w-4" : "h-5 w-5"} />
+                <div className={isMobile ? "size-4" : "size-5"}>  
+                  <Image src="/icon.png" alt="New Room" width={20} height={20} className="w-full h-full object-contain" />
+                </div>
                 <span className="sr-only">New Room</span>
               </Button>
             </TooltipTrigger>

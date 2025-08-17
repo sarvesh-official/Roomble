@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 interface UsernameInputProps {
@@ -20,7 +21,12 @@ export function UsernameInput({ onSubmit }: UsernameInputProps) {
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-card p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Welcome to Roomble</h2>
+        <div className="flex flex-col items-center mb-6">
+          <div className="size-16 mb-3">
+            <Image src="/icon.png" alt="Roomble" width={64} height={64} className="w-full h-full object-contain" priority />
+          </div>
+          <h2 className="text-xl font-semibold">Welcome to Roomble</h2>
+        </div>
         <p className="text-muted-foreground mb-6">
           Please enter a username to continue. This will be used for your avatar and display name.
         </p>

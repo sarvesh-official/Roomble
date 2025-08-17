@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { MessageSquarePlus, Hash, Lock, Users } from 'lucide-react';
+import Image from 'next/image';
+import { Hash, Lock, Users } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -37,9 +38,14 @@ export function AppSidebar({ username }: AppSidebarProps) {
               }}
               className="flex flex-row gap-3 items-center"
             >
-              <span className="text-lg font-semibold px-2 hover:bg-sidebar-accent rounded-md cursor-pointer text-sidebar-foreground">
-                Roomble
-              </span>
+              <div className="flex items-center gap-2">
+                <div className="size-6 overflow-hidden">
+                  <Image src="/icon.png" alt="Roomble" width={24} height={24} className="w-full h-full object-contain" />
+                </div>
+                <span className="text-lg font-semibold hover:bg-sidebar-accent rounded-md cursor-pointer text-sidebar-foreground">
+                  Roomble
+                </span>
+              </div>
             </Link>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -53,7 +59,9 @@ export function AppSidebar({ username }: AppSidebarProps) {
                     router.refresh();
                   }}
                 >
-                  <MessageSquarePlus className="h-5 w-5" />
+                  <div className="size-5 overflow-hidden">
+                    <Image src="/icon.png" alt="New Room" width={20} height={20} className="w-full h-full object-contain" />
+                  </div>
                 </Button>
               </TooltipTrigger>
               <TooltipContent align="end">New Room</TooltipContent>

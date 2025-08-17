@@ -8,10 +8,13 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Roomble',
   description: 'A modern, real-time chat app built around flexible chat rooms',
+  icons: {
+    icon: '/icon.png',
+  },
 };
 
 export const viewport = {
-  maximumScale: 1, // Disable auto-zoom on mobile Safari
+  maximumScale: 1,
 };
 
 const geist = Geist({

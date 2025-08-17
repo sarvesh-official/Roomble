@@ -1,12 +1,7 @@
 'use client';
 
-import { ChatLayout } from '@/components/chat-layout';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { LandingPage } from '@/components/landing-page';
 
 export default function Home() {
-  return (
-    <SidebarProvider>
-      <ChatLayout />
-    </SidebarProvider>
-  );
+  return <LandingPage />;
 }
