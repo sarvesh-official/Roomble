@@ -1,5 +1,8 @@
+/* stylelint-disable-next-line */
 @tailwind base;
+/* stylelint-disable-next-line */
 @tailwind components;
+/* stylelint-disable-next-line */
 @tailwind utilities;
 
 @layer base {
@@ -24,7 +27,7 @@
         --input: 240 5.9% 90%;
         --ring: 240 10% 3.9%;
         --radius: 0.5rem;
-        --sidebar-background: 0 0% 98%;
+        --sidebar-background: 0 0% 98%; /* #fafafa */
         --sidebar-foreground: 240 5.3% 26.1%;
         --sidebar-primary: 240 5.9% 10%;
         --sidebar-primary-foreground: 0 0% 98%;
@@ -66,11 +69,14 @@
 
 @layer base {
     * {
-        @apply border-border;
+        /* Apply border styles */
+        border-color: hsl(var(--border));
     }
 
     body {
-        @apply bg-background text-foreground;
+        /* Apply background and text colors */
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
     }
 }
 

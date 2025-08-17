@@ -17,12 +17,16 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { SidebarHistory } from './sidebar-history';
 import { SidebarUserNav } from './sidebar-user-nav';
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  username?: string;
+}
+
+export function AppSidebar({ username }: AppSidebarProps) {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
 
   return (
-    <Sidebar className="group-data-[side=left]:border-r-0 bg-black">
+    <Sidebar className="group-data-[side=left]:border-r-0 bg-sidebar">
       <SidebarHeader>
         <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
@@ -33,7 +37,7 @@ export function AppSidebar() {
               }}
               className="flex flex-row gap-3 items-center"
             >
-              <span className="text-lg font-semibold px-2 hover:bg-zinc-900 rounded-md cursor-pointer text-white">
+              <span className="text-lg font-semibold px-2 hover:bg-sidebar-accent rounded-md cursor-pointer text-sidebar-foreground">
                 Roomble
               </span>
             </Link>
@@ -42,7 +46,7 @@ export function AppSidebar() {
                 <Button
                   variant="ghost"
                   type="button"
-                  className="p-2 h-fit text-zinc-400 hover:text-white hover:bg-zinc-900"
+                  className="p-2 h-fit text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent"
                   onClick={() => {
                     setOpenMobile(false);
                     router.push('/');
@@ -61,7 +65,7 @@ export function AppSidebar() {
         <SidebarHistory />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarUserNav />
+        <SidebarUserNav username={username} />
       </SidebarFooter>
     </Sidebar>
   );
@@ -86,7 +90,7 @@ export function ChatItem({
     <Link
       href={`/room/${id}`}
       onClick={onClick}
-      className={`flex items-center gap-2 p-2 rounded-md transition-colors ${active ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'}`}
+      className={`flex items-center gap-2 p-2 rounded-md transition-colors ${active ? 'bg-sidebar-accent text-sidebar-foreground' : 'text-muted-foreground hover:text-sidebar-foreground'}`}
     >
       <div className="flex-shrink-0">
         {isPrivate ? <Lock className="h-4 w-4" /> : <Hash className="h-4 w-4" />}
@@ -95,7 +99,7 @@ export function ChatItem({
         <div className="flex items-center justify-between">
           <span className="text-sm truncate">{name}</span>
           {memberCount > 0 && (
-            <div className="flex items-center text-xs text-zinc-500">
+            <div className="flex items-center text-xs text-muted-foreground">
               <Users className="h-3 w-3 mr-1" />
               <span>{memberCount}</span>
             </div>

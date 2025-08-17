@@ -36,7 +36,7 @@ export function SidebarHistory() {
   const { setOpenMobile } = useSidebar();
   const params = useParams();
   const id = params?.id as string;
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   // Filter rooms by category
   const favoriteRooms = mockRooms.filter(room => room.category === 'favorites');
@@ -51,7 +51,7 @@ export function SidebarHistory() {
             <div className="flex flex-col gap-4">
               {favoriteRooms.length > 0 && (
                 <div>
-                  <div className="px-2 py-1 text-xs text-zinc-500 flex items-center gap-1">
+                  <div className="px-2 py-1 text-xs text-muted-foreground flex items-center gap-1">
                     <Star className="h-3 w-3" />
                     <span>Favorites</span>
                   </div>
@@ -71,7 +71,7 @@ export function SidebarHistory() {
               
               {publicRooms.length > 0 && (
                 <div>
-                  <div className="px-2 py-1 text-xs text-zinc-500">
+                  <div className="px-2 py-1 text-xs text-muted-foreground">
                     Public Rooms
                   </div>
                   {publicRooms.map((room) => (
@@ -90,7 +90,7 @@ export function SidebarHistory() {
               
               {privateRooms.length > 0 && (
                 <div>
-                  <div className="px-2 py-1 text-xs text-zinc-500">
+                  <div className="px-2 py-1 text-xs text-muted-foreground">
                     Private Rooms
                   </div>
                   {privateRooms.map((room) => (
@@ -111,7 +111,7 @@ export function SidebarHistory() {
         </SidebarGroupContent>
       </SidebarGroup>
       {isLoading && (
-        <div className="p-2 text-zinc-500 flex flex-row gap-2 items-center mt-8">
+        <div className="p-2 text-muted-foreground flex flex-row gap-2 items-center mt-8">
           <div className="animate-spin">
             <LoaderIcon className="size-4" />
           </div>

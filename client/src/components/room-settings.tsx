@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Check, ChevronDown, Settings, Users, Bell, BellOff } from 'lucide-react';
+import { ChevronDown, Settings, Users, Bell, BellOff } from 'lucide-react';
 
 // Define available room settings
 const roomSettings = [

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Messages } from '@/components/messages';
 import { ChatInput } from '@/components/chat-input';
 import { MessageProps } from '@/components/message';
 import { generateRoomId } from '@/lib/utils';
 import { ChatHeader } from '@/components/chat-header';
+import { UsernameInput } from '@/components/username-input';
 
 export function ChatLayout() {
   // Room information
@@ -16,6 +17,19 @@ export function ChatLayout() {
   });
   
   const memberCount = 24;
+  
+  // Username state
+  const [username, setUsername] = useState<string>('');
+  const [showUsernameInput, setShowUsernameInput] = useState<boolean>(true);
+  
+  // Check if username is stored in localStorage
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('roomble-username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+      setShowUsernameInput(false);
+    }
+  }, []);
   
   const [messages, setMessages] = useState<MessageProps[]>([
     {
@@ -68,7 +82,7 @@ export function ChatLayout() {
       id: generateRoomId(),
       content,
       role: 'user',
-      username: 'You',
+      username: username || 'You',
       timestamp: new Date(),
     };
 
@@ -89,12 +103,20 @@ export function ChatLayout() {
     }, 1000);
   };
 
+  // Handle username submission
+  const handleUsernameSubmit = (name: string) => {
+    setUsername(name);
+    localStorage.setItem('roomble-username', name);
+    setShowUsernameInput(false);
+  };
+
   return (
-    <div className="flex h-screen w-full bg-black">
-      <AppSidebar />
+    <div className="flex h-screen w-full bg-background">
+      {showUsernameInput && <UsernameInput onSubmit={handleUsernameSubmit} />}
+      <AppSidebar username={username} />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <ChatHeader memberCount={memberCount} />
-        <div className="flex-1 min-h-0 overflow-auto relative bg-black">
+        <div className="flex-1 min-h-0 overflow-auto relative bg-background">
           <div className="mx-auto w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
             <Messages 
               messages={messages} 

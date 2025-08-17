@@ -83,7 +83,7 @@ export function ChatInput({ onSend, isDisabled = false }: ChatInputProps) {
           onKeyDown={handleKeyDown}
           disabled={isDisabled}
           className={cn(
-            'min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-10 dark:border-zinc-700 focus-visible:ring-0 focus-visible:ring-offset-0'
+            'min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-10 border-input focus-visible:ring-0 focus-visible:ring-offset-0'
           )}
           autoComplete="off"
           rows={2}
@@ -93,7 +93,7 @@ export function ChatInput({ onSend, isDisabled = false }: ChatInputProps) {
         <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
           <Button 
             type="button" 
-            className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
+            className="rounded-md rounded-bl-lg p-[7px] h-fit border-input hover:bg-accent hover:text-accent-foreground"
             variant="ghost"
             disabled={isDisabled}
             aria-label="Attach file"
@@ -106,7 +106,7 @@ export function ChatInput({ onSend, isDisabled = false }: ChatInputProps) {
           <Button 
             type="submit" 
             disabled={!message.trim() || isDisabled}
-            className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+            className="rounded-full p-1.5 h-fit border border-input"
             aria-label="Send message"
           >
             <ArrowUpIcon size={14} />

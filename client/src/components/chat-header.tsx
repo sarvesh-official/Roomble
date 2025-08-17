@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'react-use';
 
@@ -24,7 +24,7 @@ export function ChatHeader({ memberCount = 24 }: ChatHeaderProps) {
   const isMobile = windowWidth < 640;
 
   return (
-    <header className="flex sticky top-0 bg-black py-1.5 items-center px-2 md:px-2 gap-2 text-white justify-between">
+    <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2 text-foreground justify-between z-20">
       <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
         <SidebarToggle />
 

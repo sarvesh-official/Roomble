@@ -57,12 +57,12 @@ function PureMessages({
   }, []);
 
   return (
-    <div className="relative flex flex-col flex-1 h-full overflow-hidden bg-black">
+    <div className="relative flex flex-col flex-1 h-full overflow-hidden bg-background">
       {/* Room info header removed as requested */}
       
       <div
         ref={messagesContainerRef}
-        className="flex flex-col min-w-0 gap-6 flex-1 h-full overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800 scrollbar-track-transparent"
+        className="flex flex-col min-w-0 gap-6 flex-1 h-full overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent"
         onScroll={handleScroll}
       >
         {messages.length === 0 && (
