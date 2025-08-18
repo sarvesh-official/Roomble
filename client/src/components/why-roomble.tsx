@@ -54,7 +54,7 @@ export function WhyRoomble() {
           <h2 className="text-3xl font-bold mb-4">Why Roomble?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Roomble is designed to make virtual collaboration seamless and productive. 
-            Here's why teams choose our platform for their remote work needs.
+            Here&apos;s why teams choose our platform for their remote work needs.
           </p>
         </div>
         

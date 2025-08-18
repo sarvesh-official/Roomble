@@ -127,7 +127,7 @@ export default function FeatureSection() {
               Key Benefits of Roomble
             </h2>
             <p className="text-muted-foreground mx-auto max-w-[18rem] text-center text-pretty">
-              Connect and collaborate with anyone, anywhere with Roomble's powerful features
+              Connect and collaborate with anyone, anywhere with Roomble&apos;s powerful features
             </p>
           </div>
 

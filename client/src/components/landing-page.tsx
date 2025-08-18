@@ -200,7 +200,7 @@ export function LandingPage() {
               </div>
               <div className="h-1 w-24 bg-gradient-to-r from-primary/30 to-primary/70 rounded-full my-6"></div>
               <p className="text-muted-foreground max-w-2xl text-center text-lg">
-                Experience the simplicity and power of Roomble's real-time collaboration. 
+                Experience the simplicity and power of Roomble&apos;s real-time collaboration. 
                 <span className="text-primary font-medium">Connect instantly</span> with anyone, anywhere.
               </p>
             </div>

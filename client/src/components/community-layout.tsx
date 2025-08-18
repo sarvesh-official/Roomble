@@ -113,13 +113,29 @@ const MOCK_ROOMS = [
   }
 ];
 
+// Room interface definition
+interface Room {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  members: number;
+  messages: number;
+  created_at: string;
+  last_active: string;
+  creator: {
+    name: string;
+    avatar: string | null;
+  };
+}
+
 export function CommunityLayout() {
   const router = useRouter();
   const [rooms, setRooms] = useState(MOCK_ROOMS);
   const [categories, setCategories] = useState(MOCK_CATEGORIES);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedRoom, setSelectedRoom] = useState<any | null>(null);
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   
   // Filters and view state
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -180,7 +196,7 @@ export function CommunityLayout() {
     }, 500); // Simulate network delay
   };
 
-  const handleRoomClick = (room: any) => {
+  const handleRoomClick = (room: Room) => {
     setSelectedRoom(room);
   };
 
@@ -423,7 +439,14 @@ export function CommunityLayout() {
 }
 
 // Room Card Component
-function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: any) {
+interface RoomCardProps {
+  room: Room;
+  viewMode: string;
+  onRoomClick: (room: Room) => void;
+  onJoinRoom: (roomId: string) => void;
+}
+
+function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: RoomCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', { 
@@ -523,7 +546,13 @@ function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: any) {
 }
 
 // Room Detail Modal Component
-function RoomDetailModal({ room, onClose, onJoinRoom }: any) {
+interface RoomDetailModalProps {
+  room: Room;
+  onClose: () => void;
+  onJoinRoom: (roomId: string) => void;
+}
+
+function RoomDetailModal({ room, onClose, onJoinRoom }: RoomDetailModalProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', { 
@@ -649,12 +678,19 @@ function LoadingSkeleton({ viewMode }: { viewMode: string }) {
 }
 
 // Empty State Component
+interface EmptyStateProps {
+  searchQuery: string;
+  selectedCategory: string;
+  onClearFilters: () => void;
+  onCreateRoom: () => void;
+}
+
 function EmptyState({ 
   searchQuery, 
   selectedCategory, 
   onClearFilters, 
   onCreateRoom 
-}: any) {
+}: EmptyStateProps) {
   return (
     <div className="text-center py-16 px-4">
       <div className="size-16 mx-auto mb-4 bg-muted/30 rounded-full flex items-center justify-center">
