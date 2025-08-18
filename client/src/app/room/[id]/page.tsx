@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { ChatLayout } from '@/components/chat-layout';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
+import { ThemeToggleButton } from '@/components/ui/theme-toggle-button';
 
 export default function RoomPage() {
   const params = useParams();
@@ -85,13 +86,16 @@ export default function RoomPage() {
             </Button>
           </form>
 
-          <div className="text-center">
+          <div className="flex flex-col items-center gap-4">
             <Link 
               href="/"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               ← Back to Home
             </Link>
+            <div className="mt-2">
+            <ThemeToggleButton variant="gif" url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWI1ZmNvMGZyemhpN3VsdWp4azYzcWUxcXIzNGF0enp0eW1ybjF0ZyZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/Fa6uUw8jgJHFVS6x1t/giphy.gif" />
+            </div>
           </div>
         </div>
       </div>

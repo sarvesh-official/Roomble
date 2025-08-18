@@ -1,14 +1,29 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { MessageSquare, Shield, Zap, Share2, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { generateRoomId } from '@/lib/utils';
+import { WhyRoomble } from "./why-roomble";
+import FeatureSection from "./feature-section";
+import { GlobalConnectivityBento } from "./global-connectivity-bento";
+import { GradientBars } from '@/components/ui/gradient-bars';
+import { TextReveal } from '@/components/ui/text-reveal';
+import { ContainerTextFlip } from '@/components/ui/container-text-flip';
+import { ThemeToggleButton } from './ui/theme-toggle-button';
+import {
+  Navbar,
+  NavBody,
+  NavItems,
+  MobileNav,
+  MobileNavHeader,
+  MobileNavToggle,
+  MobileNavMenu,
+} from "@/components/ui/resizable-navbar";
 
 export function LandingPage() {
   const router = useRouter();
@@ -17,7 +32,7 @@ export function LandingPage() {
   const [roomIdError, setRoomIdError] = useState('');
   const { resolvedTheme } = useTheme();
   const isDarkTheme = resolvedTheme === 'dark';
-  const { theme } = useTheme();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleCreateRoom = () => {
     setIsCreatingRoom(true);
@@ -35,135 +50,162 @@ export function LandingPage() {
     }, 500);
   };
 
+  const navItems = [
+    {
+      name: "Features",
+      link: "#features",
+    },
+    {
+      name: "Join",
+      link: "#join",
+    },
+    {
+      name: "Community",
+      link: "/community",
+    },
+  ];
+
   return (
-    <div className={`flex flex-col min-h-screen bg-${theme}-background`}>
-      {/* Hero Section */}
-      <header className="container mx-auto px-4 py-8 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="size-8 overflow-hidden">
-            <Image src="/icon.png" alt="Roomble" width={32} height={32} className="w-full h-full object-contain" />
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* Header with Resizable Navbar */}
+      <Navbar className="top-0">
+        {/* Desktop Navigation */}
+        <NavBody>
+          <div className="flex items-center gap-2">
+            <div className="size-8 overflow-hidden">
+              <Image src="/icon.png" alt="Roomble" width={32} height={32} className="w-full h-full object-contain" />
+            </div>
+            <span className="font-semibold text-xl">Roomble</span>
           </div>
-          <span className="font-semibold text-xl">Roomble</span>
-        </div>
-        <nav className="hidden md:flex items-center gap-6">
+          <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <Button variant="ghost" asChild>
-              <a href="#features">Features</a>
-            </Button>
-            <Button variant="ghost" asChild>
-              <a href="#preview">Preview</a>
-            </Button>
-            <Button variant="ghost" asChild>
-              <a href="#join">Join</a>
-            </Button>
-            <ThemeToggle />
+            <ThemeToggleButton randomize={true} />
           </div>
-        </nav>
-      </header>
+        </NavBody>
+
+        {/* Mobile Navigation */}
+        <MobileNav>
+          <MobileNavHeader>
+            <div className="flex items-center gap-2">
+              <div className="size-8 overflow-hidden">
+                <Image src="/icon.png" alt="Roomble" width={32} height={32} className="w-full h-full object-contain" />
+              </div>
+              <span className="font-semibold text-xl">Roomble</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ThemeToggleButton randomize={true} />
+              <MobileNavToggle
+                isOpen={isMobileMenuOpen}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              />
+            </div>
+          </MobileNavHeader>
+
+          <MobileNavMenu
+            isOpen={isMobileMenuOpen}
+            onClose={() => setIsMobileMenuOpen(false)}
+          >
+            {navItems.map((item, idx) => (
+              <a
+                key={`mobile-link-${idx}`}
+                href={item.link}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="relative text-neutral-600 dark:text-neutral-300"
+              >
+                <span className="block">{item.name}</span>
+              </a>
+            ))}
+          </MobileNavMenu>
+        </MobileNav>
+      </Navbar>
 
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className={`container mx-auto px-4 py-20 md:py-32 flex flex-col items-center text-center bg-${theme}-background`}>
-          <div className="size-24 mb-6">
-            <Image src="/icon.png" alt="Roomble" width={96} height={96} className="w-full h-full object-contain" priority />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-            Conversations, Simplified.
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mb-10">
-            Create, join, and share rooms instantly. A new way to connect in real time.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="sm:w-auto w-full gap-2 px-6"
-              onClick={handleCreateRoom}
-              disabled={isCreatingRoom}
-            >
-              {isCreatingRoom ? 'Creating...' : 'Create Room'}
-              {/* {!isCreatingRoom && <ArrowRight size={16} />} */}
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="sm:w-auto w-full gap-2 px-6"
-              asChild
-            >   
-              <Link href="#join">Join Room</Link>
-            </Button>
+        <section className="relative overflow-hidden h-screen flex items-center justify-center">
+          <GradientBars />
+          <div className="container relative z-10 mx-auto px-4 flex flex-col items-center text-center">
+            <div className="size-24 mb-6">
+              <Image src="/icon.png" alt="Roomble" width={96} height={96} className="w-full h-full object-contain" priority />
+            </div>
+            <TextReveal>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+                Conversations, <ContainerTextFlip words={["Simplified", "Connected", "Instant", "Seamless"]} />
+              </h1>
+            </TextReveal>
+            <TextReveal delay={0.7}>
+              <p className="text-xl text-muted-foreground max-w-2xl mb-10">
+                Create, join, and share rooms instantly. A new way to connect in real time.
+              </p>
+            </TextReveal>
+            <TextReveal delay={0.9}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  className="sm:w-auto w-full gap-2 px-6"
+                  onClick={handleCreateRoom}
+                  disabled={isCreatingRoom}
+                >
+                  {isCreatingRoom ? 'Creating...' : 'Create Room'}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="sm:w-auto w-full gap-2 px-6"
+                  asChild
+                >   
+                  <Link href="#join">Join Room</Link>
+                </Button>
+              </div>
+            </TextReveal>
           </div>
         </section>
 
         {/* Features Section */}
-        <section id="features" className="bg-gradient-to-b from-muted/30 to-muted/50 py-24">
+        <WhyRoomble />
+        
+        {/* Global Connectivity Section */}
+        <section className="py-20 md:py-32 bg-gradient-to-b from-background to-muted/30">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col items-center mb-16">
-              <div className="size-12 mb-4">
-                <Image src="/icon.png" alt="Roomble" width={48} height={48} className="w-full h-full object-contain" />
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-center">Why Roomble?</h2>
-              <div className="h-1 w-20 bg-primary/70 rounded-full mt-6"></div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-              <div className="bg-card p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-primary/20 group">
-                <div className="size-14 rounded-full bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
-                  <Share2 size={28} className="text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Instant Sharing</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Short sharable unique room IDs make it easy to invite others to join your conversations.
-                </p>
-              </div>
-              
-              <div className="bg-card p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-primary/20 group">
-                <div className="size-14 rounded-full bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
-                  <Zap size={28} className="text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Real-time Chat</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Powered by WebSockets for instant message delivery with no delays or refreshing needed.
-                </p>
-              </div>
-              
-              <div className="bg-card p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-primary/20 group">
-                <div className="size-14 rounded-full bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
-                  <Shield size={28} className="text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Secure & Private</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Your conversations stay private and secure with no data stored permanently on our servers.
-                </p>
-              </div>
-              
-              <div className="bg-card p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 hover:border-primary/20 group">
-                <div className="size-14 rounded-full bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
-                  <MessageSquare size={28} className="text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Just Chat</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  No setup required. Join and start chatting immediately with a clean, distraction-free interface.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Preview Section */}
-        <section id="preview" className="py-20 md:py-32 bg-gradient-to-b from-background to-muted/30">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col items-center mb-16">
-              <div className="size-12 mb-4">
-                <Image src="/icon.png" alt="Roomble" width={48} height={48} className="w-full h-full object-contain" />
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-center">See Roomble in Action</h2>
-              <div className="h-1 w-20 bg-primary/70 rounded-full mt-6 mb-6"></div>
-              <p className="text-center text-muted-foreground max-w-2xl mx-auto">
-                A clean, intuitive interface designed for distraction-free conversations.
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Global Connectivity</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Connect with people from around the world using Roomble's seamless communication platform.
               </p>
             </div>
             
-            {/* Main Chat Mockup */}
+            <GlobalConnectivityBento />
+          </div>
+        </section>
+
+        {/* Feature Section */}
+        <FeatureSection />
+        
+        {/* See in Action Section */}
+        <section className="py-20 md:py-32 bg-gradient-to-b from-background to-muted/30 relative overflow-hidden">
+          {/* Background decorative elements */}
+          <div className="absolute top-40 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-40 right-10 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col items-center mb-16">
+              <div className="bg-primary/10 text-primary shadow-primary/10 group-hover:bg-primary/20 group-hover:shadow-primary/20 mb-4 flex h-16 w-16 items-center justify-center rounded-full shadow transition-all duration-500">
+                <div className="relative">
+                  <div className="absolute -inset-1 rounded-full bg-primary/20 animate-ping opacity-75"></div>
+                  <Image src="/icon.png" alt="Roomble" width={48} height={48} className="relative z-10 w-full h-full object-contain" />
+                </div>
+              </div>
+              <div className="relative">
+                <h2 className="text-4xl font-bold mb-4 relative z-10">See Roomble in Action</h2>
+                <div className="absolute -bottom-3 left-0 right-0 h-3 bg-primary/20 -z-10 transform skew-x-12"></div>
+              </div>
+              <div className="h-1 w-24 bg-gradient-to-r from-primary/30 to-primary/70 rounded-full my-6"></div>
+              <p className="text-muted-foreground max-w-2xl text-center text-lg">
+                Experience the simplicity and power of Roomble's real-time collaboration. 
+                <span className="text-primary font-medium">Connect instantly</span> with anyone, anywhere.
+              </p>
+            </div>
+            
+            {/* Chat Mockup */}
             <div className="relative w-full max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl border mb-16">
               <div className="aspect-[16/9] bg-black/5 flex items-center justify-center">
                 <div className="w-full h-full relative">
@@ -257,30 +299,43 @@ export function LandingPage() {
                   </div>
                   <span>Dark Mode Support</span>
                 </h3>
-                <div className={`aspect-video rounded-xl overflow-hidden border shadow-md ${isDarkTheme ? 'bg-zinc-900' : 'bg-zinc-900'}`}>
-                  <div className="h-10 border-b border-zinc-800 flex items-center px-4">
+                <div className="aspect-video rounded-xl overflow-hidden border shadow-md transition-colors duration-300"
+                  style={{ backgroundColor: isDarkTheme ? 'hsl(240 10% 3.9%)' : 'hsl(0 0% 100%)' }}>
+                  <div className="h-10 border-b flex items-center px-4 transition-colors duration-300"
+                    style={{ borderColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 5.9% 90%)' }}>
                     <div className="size-5 overflow-hidden mr-2">
                       <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: "url('/icon.png')" }}></div>
                     </div>
-                    <div className="h-3 w-24 bg-zinc-800 rounded"></div>
+                    <div className="h-3 w-24 rounded transition-colors duration-300"
+                      style={{ backgroundColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)' }}></div>
                     <div className="ml-auto flex gap-2">
-                      <div className="h-6 w-16 rounded bg-zinc-800"></div>
-                      <div className="h-6 w-6 rounded bg-zinc-800"></div>
+                      <div className="h-6 w-16 rounded transition-colors duration-300"
+                        style={{ backgroundColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)' }}></div>
+                      <div className="h-6 w-6 rounded transition-colors duration-300"
+                        style={{ backgroundColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)' }}></div>
                     </div>
                   </div>
                   <div className="flex h-[calc(100%-2.5rem)]">
-                    <div className="w-48 border-r border-zinc-800 p-3 space-y-2">
+                    <div className="w-48 border-r p-3 space-y-2 transition-colors duration-300"
+                      style={{ borderColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 5.9% 90%)' }}>
                       {[1, 2, 3].map(i => (
-                        <div key={`sidebar-${i}`} className="h-8 rounded bg-zinc-800"></div>
+                        <div key={`sidebar-${i}`} className="h-8 rounded transition-colors duration-300"
+                          style={{ backgroundColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)' }}></div>
                       ))}
                     </div>
                     <div className="flex-1 p-4 space-y-3">
                       {[1, 2].map(i => (
-                        <div key={`dark-${i}`} className={`max-w-[60%] ${i % 2 === 0 ? 'ml-auto' : ''} p-2 rounded-lg ${i % 2 === 0 ? 'bg-indigo-900/30' : 'bg-zinc-800'}`}>
-                          <div className="h-2 w-16 bg-zinc-700 rounded mb-2"></div>
+                        <div key={`dark-${i}`} className={`max-w-[60%] ${i % 2 === 0 ? 'ml-auto' : ''} p-2 rounded-lg transition-colors duration-300`}
+                          style={{ backgroundColor: i % 2 === 0 
+                            ? (isDarkTheme ? 'rgba(67, 56, 202, 0.3)' : 'rgba(79, 70, 229, 0.1)') 
+                            : (isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)') }}>
+                          <div className="h-2 w-16 rounded mb-2 transition-colors duration-300"
+                            style={{ backgroundColor: isDarkTheme ? 'hsl(240 5% 26%)' : 'hsl(240 5% 64.9%)' }}></div>
                           <div className="space-y-1">
-                            <div className="h-2 w-full bg-zinc-700 rounded"></div>
-                            <div className="h-2 w-[80%] bg-zinc-700 rounded"></div>
+                            <div className="h-2 w-full rounded transition-colors duration-300"
+                              style={{ backgroundColor: isDarkTheme ? 'hsl(240 5% 26%)' : 'hsl(240 5% 64.9%)' }}></div>
+                            <div className="h-2 w-[80%] rounded transition-colors duration-300"
+                              style={{ backgroundColor: isDarkTheme ? 'hsl(240 5% 26%)' : 'hsl(240 5% 64.9%)' }}></div>
                           </div>
                         </div>
                       ))}
@@ -385,6 +440,9 @@ export function LandingPage() {
               </Link>
               <Link href="https://github.com/sarvesh-official/Roomble" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 GitHub
+              </Link>
+              <Link href="/theme-toggle-demo" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Theme Toggle Demo
               </Link>
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Contact

@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from './ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { VisibilitySelector } from './visibility-selector';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Users } from 'lucide-react';
 
 interface ChatHeaderProps {
@@ -62,6 +63,8 @@ export function ChatHeader({ memberCount = 24 }: ChatHeaderProps) {
           <Users className={isMobile ? "h-4 w-4" : "h-5 w-5"} />
           <span>{memberCount}</span>
         </div>
+        
+        <ThemeToggle variant="animated" />
         
         <ShareButton />
       </div>

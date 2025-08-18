@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronUp, User } from 'lucide-react';
+import { ChevronUp, Palette, User } from 'lucide-react';
+import Link from 'next/link';
 import { useTheme } from 'next-themes';
 
 import {
@@ -26,6 +27,12 @@ export function SidebarUserNav({ username }: SidebarUserNavProps) {
   const { setTheme, resolvedTheme } = useTheme();
   const [displayName, setDisplayName] = useState<string>('Guest');
   const [avatarId, setAvatarId] = useState<string>('Roomble');
+  const [mounted, setMounted] = useState(false);
+  
+  // Handle client-side hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Update avatar ID when username changes
   useEffect(() => {
@@ -34,6 +41,28 @@ export function SidebarUserNav({ username }: SidebarUserNavProps) {
       setAvatarId(username);
     }
   }, [username]);
+
+  // Return a simplified version during server-side rendering
+  if (!mounted) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            data-testid="user-nav-button"
+            className="data-[state=open]:bg-sidebar-accent bg-background data-[state=open]:text-sidebar-accent-foreground h-10"
+          >
+            <div className="size-8 flex items-center rounded-full justify-center bg-sidebar-accent text-sidebar-foreground">
+              <div className="size-6 rounded-full bg-sidebar-accent/50" />
+            </div>
+            <span data-testid="user-email" className="truncate">
+              {displayName}
+            </span>
+            <ChevronUp className="ml-auto" />
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
+  }
 
   return (
     <SidebarMenu>
@@ -70,6 +99,12 @@ export function SidebarUserNav({ username }: SidebarUserNavProps) {
               onSelect={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
             >
               {`Toggle ${resolvedTheme === 'light' ? 'dark' : 'light'} mode`}
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/theme-toggle-demo" className="flex w-full cursor-pointer items-center">
+                <Palette className="mr-2 h-4 w-4" />
+                Theme Toggle Demo
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild data-testid="user-nav-item-auth">

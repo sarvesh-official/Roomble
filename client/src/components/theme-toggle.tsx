@@ -2,6 +2,7 @@
 
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -10,10 +11,69 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
 
-export function ThemeToggle() {
+export function ThemeToggle({ variant = "default" }: { variant?: "default" | "animated" }) {
   const { setTheme, resolvedTheme } = useTheme();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  
+  // Set mounted state after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // Use a safe theme value that won't cause hydration mismatch
+  const currentTheme = mounted ? resolvedTheme : undefined;
 
+  const toggleTheme = () => {
+    setIsAnimating(true);
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+    setTimeout(() => setIsAnimating(false), 1000);
+  };
+
+  if (variant === "animated") {
+    return (
+      <div className="relative">
+        <button
+          onClick={toggleTheme}
+          className="relative z-20 overflow-hidden rounded-full p-1 ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300"
+          aria-label="Toggle theme"
+        >
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+            {!mounted ? (
+              <div className="h-5 w-5" />
+            ) : currentTheme === "dark" ? (
+              <Sun className="h-5 w-5 text-yellow-400" />
+            ) : (
+              <Moon className="h-5 w-5 text-slate-700" />
+            )}
+          </div>
+        </button>
+        {isAnimating && (
+          <div
+            className={cn(
+              "absolute z-10 rounded-full bg-slate-100 dark:bg-slate-800",
+              "top-0 right-0",
+              "animate-ripple-blur",
+              "pointer-events-none"
+            )}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Show a simplified version during server rendering
+  if (!mounted) {
+    return (
+      <Button variant="ghost" size="icon" className="h-9 w-9">
+        <div className="h-[1.2rem] w-[1.2rem]" />
+        <span className="sr-only">Toggle theme</span>
+      </Button>
+    );
+  }
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
