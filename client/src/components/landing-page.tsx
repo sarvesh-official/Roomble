@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -33,6 +33,12 @@ export function LandingPage() {
   const { resolvedTheme } = useTheme();
   const isDarkTheme = resolvedTheme === 'dark';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  
+  // Set mounted state after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleCreateRoom = () => {
     setIsCreatingRoom(true);
@@ -169,7 +175,7 @@ export function LandingPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Global Connectivity</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Connect with people from around the world using Roomble's seamless communication platform.
+                Connect with people from around the world using Roomble&apos;s seamless communication platform.
               </p>
             </div>
             
@@ -212,8 +218,7 @@ export function LandingPage() {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-full max-w-3xl h-[80%] bg-card rounded-lg shadow-lg border flex transition-colors duration-300">
                       {/* Sidebar mockup */}
-                      <div className="hidden md:block w-64 border-r p-4 transition-colors duration-300" 
-                        style={{ backgroundColor: isDarkTheme ? 'hsl(240 5.9% 10%)' : 'hsl(0 0% 98%)' }}>
+                      <div className="hidden md:block w-64 border-r p-4 transition-colors duration-300 bg-[hsl(0_0%_98%)] dark:bg-[hsl(240_5.9%_10%)]">
                         <div className="flex items-center gap-2 mb-6">
                           <div className="size-6 overflow-hidden rounded-sm">
                             <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: "url('/icon.png')" }}></div>
@@ -266,8 +271,7 @@ export function LandingPage() {
                   </div>
                   <span>Mobile Experience</span>
                 </h3>
-                <div className="aspect-[9/16] max-w-[240px] mx-auto rounded-xl overflow-hidden border shadow-md transition-colors duration-300" 
-                  style={{ backgroundColor: isDarkTheme ? 'hsl(240 10% 3.9%)' : 'hsl(0 0% 100%)' }}>
+                <div className="aspect-[9/16] max-w-[240px] mx-auto rounded-xl overflow-hidden border shadow-md transition-colors duration-300 bg-white dark:bg-[hsl(240_10%_3.9%)]">
                   <div className="h-8 bg-muted/30 border-b flex items-center justify-center gap-2">
                     <div className="size-4 overflow-hidden">
                       <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: "url('/icon.png')" }}></div>
@@ -299,43 +303,30 @@ export function LandingPage() {
                   </div>
                   <span>Dark Mode Support</span>
                 </h3>
-                <div className="aspect-video rounded-xl overflow-hidden border shadow-md transition-colors duration-300"
-                  style={{ backgroundColor: isDarkTheme ? 'hsl(240 10% 3.9%)' : 'hsl(0 0% 100%)' }}>
-                  <div className="h-10 border-b flex items-center px-4 transition-colors duration-300"
-                    style={{ borderColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 5.9% 90%)' }}>
+                <div className="aspect-video rounded-xl overflow-hidden border shadow-md transition-colors duration-300 bg-white dark:bg-[hsl(240_10%_3.9%)]">
+                  <div className="h-10 border-b flex items-center px-4 transition-colors duration-300 border-[hsl(240_5.9%_90%)] dark:border-[hsl(240_3.7%_15.9%)]">
                     <div className="size-5 overflow-hidden mr-2">
                       <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: "url('/icon.png')" }}></div>
                     </div>
-                    <div className="h-3 w-24 rounded transition-colors duration-300"
-                      style={{ backgroundColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)' }}></div>
+                    <div className="h-3 w-24 rounded transition-colors duration-300 bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]"></div>
                     <div className="ml-auto flex gap-2">
-                      <div className="h-6 w-16 rounded transition-colors duration-300"
-                        style={{ backgroundColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)' }}></div>
-                      <div className="h-6 w-6 rounded transition-colors duration-300"
-                        style={{ backgroundColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)' }}></div>
+                      <div className="h-6 w-16 rounded transition-colors duration-300 bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]"></div>
+                      <div className="h-6 w-6 rounded transition-colors duration-300 bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]"></div>
                     </div>
                   </div>
                   <div className="flex h-[calc(100%-2.5rem)]">
-                    <div className="w-48 border-r p-3 space-y-2 transition-colors duration-300"
-                      style={{ borderColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 5.9% 90%)' }}>
+                    <div className="w-48 border-r p-3 space-y-2 transition-colors duration-300 border-[hsl(240_5.9%_90%)] dark:border-[hsl(240_3.7%_15.9%)]">
                       {[1, 2, 3].map(i => (
-                        <div key={`sidebar-${i}`} className="h-8 rounded transition-colors duration-300"
-                          style={{ backgroundColor: isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)' }}></div>
+                        <div key={`sidebar-${i}`} className="h-8 rounded transition-colors duration-300 bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]"></div>
                       ))}
                     </div>
                     <div className="flex-1 p-4 space-y-3">
                       {[1, 2].map(i => (
-                        <div key={`dark-${i}`} className={`max-w-[60%] ${i % 2 === 0 ? 'ml-auto' : ''} p-2 rounded-lg transition-colors duration-300`}
-                          style={{ backgroundColor: i % 2 === 0 
-                            ? (isDarkTheme ? 'rgba(67, 56, 202, 0.3)' : 'rgba(79, 70, 229, 0.1)') 
-                            : (isDarkTheme ? 'hsl(240 3.7% 15.9%)' : 'hsl(240 4.8% 95.9%)') }}>
-                          <div className="h-2 w-16 rounded mb-2 transition-colors duration-300"
-                            style={{ backgroundColor: isDarkTheme ? 'hsl(240 5% 26%)' : 'hsl(240 5% 64.9%)' }}></div>
+                        <div key={`dark-${i}`} className={`max-w-[60%] ${i % 2 === 0 ? 'ml-auto' : ''} p-2 rounded-lg transition-colors duration-300 ${i % 2 === 0 ? 'bg-[rgba(79,70,229,0.1)] dark:bg-[rgba(67,56,202,0.3)]' : 'bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]'}`}>
+                          <div className="h-2 w-16 rounded mb-2 transition-colors duration-300 bg-[hsl(240_5%_64.9%)] dark:bg-[hsl(240_5%_26%)]"></div>
                           <div className="space-y-1">
-                            <div className="h-2 w-full rounded transition-colors duration-300"
-                              style={{ backgroundColor: isDarkTheme ? 'hsl(240 5% 26%)' : 'hsl(240 5% 64.9%)' }}></div>
-                            <div className="h-2 w-[80%] rounded transition-colors duration-300"
-                              style={{ backgroundColor: isDarkTheme ? 'hsl(240 5% 26%)' : 'hsl(240 5% 64.9%)' }}></div>
+                            <div className="h-2 w-full rounded transition-colors duration-300 bg-[hsl(240_5%_64.9%)] dark:bg-[hsl(240_5%_26%)]"></div>
+                            <div className="h-2 w-[80%] rounded transition-colors duration-300 bg-[hsl(240_5%_64.9%)] dark:bg-[hsl(240_5%_26%)]"></div>
                           </div>
                         </div>
                       ))}
@@ -451,7 +442,7 @@ export function LandingPage() {
           </div>
           <div className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">
             <p>Community page coming soon — a place to discover and join open conversations.</p>
-            <p className="mt-2">&copy; {new Date().getFullYear()} Roomble. All rights reserved.</p>
+            <p className="mt-2">© {new Date().getFullYear()} Roomble. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Search, X, Grid, List, ChevronDown } from 'lucide-react';
@@ -143,12 +143,8 @@ export function CommunityLayout() {
   const [viewMode, setViewMode] = useState('grid');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Load rooms when filters change
-  useEffect(() => {
-    loadRooms();
-  }, [selectedCategory, sortBy, searchQuery]);
-
-  const loadRooms = () => {
+  // Define loadRooms function with useCallback to avoid dependency issues
+  const loadRooms = useCallback(() => {
     setLoading(true);
     
     // Simulate API call with setTimeout
@@ -194,7 +190,12 @@ export function CommunityLayout() {
         setLoading(false);
       }
     }, 500); // Simulate network delay
-  };
+  }, [selectedCategory, sortBy, searchQuery]);
+
+  // Load rooms when filters change
+  useEffect(() => {
+    loadRooms();
+  }, [loadRooms]);
 
   const handleRoomClick = (room: Room) => {
     setSelectedRoom(room);

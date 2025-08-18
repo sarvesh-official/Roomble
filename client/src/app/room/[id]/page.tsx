@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChatLayout } from '@/components/chat-layout';
@@ -11,7 +11,6 @@ import { ThemeToggleButton } from '@/components/ui/theme-toggle-button';
 
 export default function RoomPage() {
   const params = useParams();
-  const router = useRouter();
   const roomId = params?.id as string;
   
   const [username, setUsername] = useState('');

@@ -26,9 +26,15 @@ export function ThemeToggleButton({
   randomize = false
 }: ThemeToggleAnimationProps) {
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
   const [currentVariant, setCurrentVariant] = React.useState<AnimationVariant>(variant)
   const [currentStart, setCurrentStart] = React.useState<AnimationStart>(start)
   const [currentUrl, setCurrentUrl] = React.useState<string>(url)
+  
+  // Hydration fix: Only render component after mounting on client
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const styleId = "theme-transition-styles"
 
@@ -84,6 +90,20 @@ export function ThemeToggleButton({
     document.startViewTransition(switchTheme)
   }, [theme, setTheme, randomize, currentVariant, currentStart, currentUrl, getRandomAnimation, updateStyles])
 
+  // Don't render anything until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-9 p-0 h-9 relative group"
+        name="Theme Toggle Button"
+      >
+        <span className="sr-only">Theme Toggle</span>
+      </Button>
+    );
+  }
+  
   return (
     <Button
       onClick={toggleTheme}
@@ -94,7 +114,7 @@ export function ThemeToggleButton({
     >
       <SunIcon className="size-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <MoonIcon className="absolute size-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Theme Toggle </span>
+      <span className="sr-only">Theme Toggle</span>
     </Button>
   )
 }
