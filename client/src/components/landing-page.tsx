@@ -15,6 +15,10 @@ import { GradientBars } from '@/components/ui/gradient-bars';
 import { TextReveal } from '@/components/ui/text-reveal';
 import { ContainerTextFlip } from '@/components/ui/container-text-flip';
 import { ThemeToggleButton } from './ui/theme-toggle-button';
+import { AppFlowTimeline } from './app-flow-timeline';
+import { AvatarStack } from '@/components/ui/avatar-stack';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import {
   Navbar,
   NavBody,
@@ -193,148 +197,28 @@ export function LandingPage() {
           <div className="absolute bottom-40 right-10 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
           
           <div className="container mx-auto px-4 relative z-10">
-            <div className="flex flex-col items-center mb-16">
-              <div className="bg-primary/10 text-primary shadow-primary/10 group-hover:bg-primary/20 group-hover:shadow-primary/20 mb-4 flex h-16 w-16 items-center justify-center rounded-full shadow transition-all duration-500">
-                <div className="relative">
-                  <div className="absolute -inset-1 rounded-full bg-primary/20 animate-ping opacity-75"></div>
-                  <Image src="/icon.png" alt="Roomble" width={48} height={48} className="relative z-10 w-full h-full object-contain" />
-                </div>
+            <div className="flex flex-col items-center mb-8">
+              <div className="relative size-12 mb-6">
+                <div className="absolute -inset-1 rounded-full bg-primary/20 animate-ping opacity-75"></div>
+                <Image src="/icon.png" alt="Roomble" width={48} height={48} className="relative z-10 w-full h-full object-contain" />
               </div>
               <div className="relative">
-                <h2 className="text-4xl font-bold mb-4 relative z-10">See Roomble in Action</h2>
+                <h2 className="text-4xl font-bold mb-4 relative z-10">Roomble in Action</h2>
                 <div className="absolute -bottom-3 left-0 right-0 h-3 bg-primary/20 -z-10 transform skew-x-12"></div>
               </div>
               <div className="h-1 w-24 bg-gradient-to-r from-primary/30 to-primary/70 rounded-full my-6"></div>
-              <p className="text-muted-foreground max-w-2xl text-center text-lg">
+              <p className="text-muted-foreground max-w-2xl text-center text-lg mb-2">
                 Experience the simplicity and power of Roomble&apos;s real-time collaboration. 
-                <span className="text-primary font-medium">Connect instantly</span> with anyone, anywhere.
+                <span className="text-primary font-medium"> Connect instantly</span> with anyone, anywhere.
+              </p>
+              <p className="text-primary/80 font-medium text-lg mb-8">
+                Follow the journey of how users interact with Roomble from start to finish
               </p>
             </div>
             
-            {/* Chat Mockup */}
-            <div className="relative w-full max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl border mb-16">
-              <div className="aspect-[16/9] bg-black/5 flex items-center justify-center">
-                <div className="w-full h-full relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-full max-w-3xl h-[80%] bg-card rounded-lg shadow-lg border flex transition-colors duration-300">
-                      {/* Sidebar mockup */}
-                      <div className="hidden md:block w-64 border-r p-4 transition-colors duration-300 bg-[hsl(0_0%_98%)] dark:bg-[hsl(240_5.9%_10%)]">
-                        <div className="flex items-center gap-2 mb-6">
-                          <div className="size-6 overflow-hidden rounded-sm">
-                            <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: "url('/icon.png')" }}></div>
-                          </div>
-                          <div className="h-4 w-24 bg-muted rounded"></div>
-                        </div>
-                        <div className="space-y-2">
-                          {[1, 2, 3].map(i => (
-                            <div key={i} className="flex items-center gap-2 p-2 rounded bg-muted/50">
-                              <div className="size-4 rounded-full bg-primary/20"></div>
-                              <div className="h-3 w-20 bg-muted rounded"></div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Chat area mockup */}
-                      <div className="flex-1 flex flex-col">
-                        <div className="h-12 border-b flex items-center px-4">
-                          <div className="h-4 w-32 bg-muted rounded"></div>
-                        </div>
-                        <div className="flex-1 p-4 space-y-4 overflow-hidden">
-                          {[1, 2, 3].map(i => (
-                            <div key={i} className={`max-w-[80%] ${i % 2 === 0 ? 'ml-auto' : ''} p-3 rounded-lg ${i % 2 === 0 ? 'bg-primary/10' : 'bg-muted'}`}>
-                              <div className="h-3 w-16 bg-muted/50 rounded mb-2"></div>
-                              <div className="space-y-1">
-                                <div className="h-2 w-full bg-muted/50 rounded"></div>
-                                <div className="h-2 w-[80%] bg-muted/50 rounded"></div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="h-14 border-t p-2">
-                          <div className="h-full bg-muted/30 rounded-md w-full"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Additional Mockups */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-16">
-              {/* Mobile View Mockup */}
-              <div className="bg-card rounded-xl overflow-hidden shadow-lg border p-6 hover:shadow-xl transition-all duration-300">
-                <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                  <div className="size-5 overflow-hidden">
-                    <Image src="/icon.png" alt="Roomble" width={20} height={20} className="w-full h-full object-contain" />
-                  </div>
-                  <span>Mobile Experience</span>
-                </h3>
-                <div className="aspect-[9/16] max-w-[240px] mx-auto rounded-xl overflow-hidden border shadow-md transition-colors duration-300 bg-white dark:bg-[hsl(240_10%_3.9%)]">
-                  <div className="h-8 bg-muted/30 border-b flex items-center justify-center gap-2">
-                    <div className="size-4 overflow-hidden">
-                      <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: "url('/icon.png')" }}></div>
-                    </div>
-                    <div className="w-16 h-1 bg-muted rounded-full"></div>
-                  </div>
-                  <div className="p-2 h-full">
-                    <div className="space-y-2">
-                      {[1, 2, 3].map(i => (
-                        <div key={`mobile-${i}`} className={`max-w-[80%] ${i % 2 === 0 ? 'ml-auto' : ''} p-2 rounded-lg ${i % 2 === 0 ? 'bg-primary/10' : 'bg-muted'}`}>
-                          <div className="h-2 w-12 bg-muted/50 rounded mb-1"></div>
-                          <div className="space-y-1">
-                            <div className="h-1.5 w-full bg-muted/50 rounded"></div>
-                            <div className="h-1.5 w-[60%] bg-muted/50 rounded"></div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground mt-4 text-center">Fully responsive design for on-the-go conversations</p>
-              </div>
-              
-              {/* Dark Mode Mockup */}
-              <div className="bg-card rounded-xl overflow-hidden shadow-lg border p-6 hover:shadow-xl transition-all duration-300">
-                <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                  <div className="size-5 overflow-hidden">
-                    <Image src="/icon.png" alt="Roomble" width={20} height={20} className="w-full h-full object-contain" />
-                  </div>
-                  <span>Dark Mode Support</span>
-                </h3>
-                <div className="aspect-video rounded-xl overflow-hidden border shadow-md transition-colors duration-300 bg-white dark:bg-[hsl(240_10%_3.9%)]">
-                  <div className="h-10 border-b flex items-center px-4 transition-colors duration-300 border-[hsl(240_5.9%_90%)] dark:border-[hsl(240_3.7%_15.9%)]">
-                    <div className="size-5 overflow-hidden mr-2">
-                      <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: "url('/icon.png')" }}></div>
-                    </div>
-                    <div className="h-3 w-24 rounded transition-colors duration-300 bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]"></div>
-                    <div className="ml-auto flex gap-2">
-                      <div className="h-6 w-16 rounded transition-colors duration-300 bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]"></div>
-                      <div className="h-6 w-6 rounded transition-colors duration-300 bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]"></div>
-                    </div>
-                  </div>
-                  <div className="flex h-[calc(100%-2.5rem)]">
-                    <div className="w-48 border-r p-3 space-y-2 transition-colors duration-300 border-[hsl(240_5.9%_90%)] dark:border-[hsl(240_3.7%_15.9%)]">
-                      {[1, 2, 3].map(i => (
-                        <div key={`sidebar-${i}`} className="h-8 rounded transition-colors duration-300 bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]"></div>
-                      ))}
-                    </div>
-                    <div className="flex-1 p-4 space-y-3">
-                      {[1, 2].map(i => (
-                        <div key={`dark-${i}`} className={`max-w-[60%] ${i % 2 === 0 ? 'ml-auto' : ''} p-2 rounded-lg transition-colors duration-300 ${i % 2 === 0 ? 'bg-[rgba(79,70,229,0.1)] dark:bg-[rgba(67,56,202,0.3)]' : 'bg-[hsl(240_4.8%_95.9%)] dark:bg-[hsl(240_3.7%_15.9%)]'}`}>
-                          <div className="h-2 w-16 rounded mb-2 transition-colors duration-300 bg-[hsl(240_5%_64.9%)] dark:bg-[hsl(240_5%_26%)]"></div>
-                          <div className="space-y-1">
-                            <div className="h-2 w-full rounded transition-colors duration-300 bg-[hsl(240_5%_64.9%)] dark:bg-[hsl(240_5%_26%)]"></div>
-                            <div className="h-2 w-[80%] rounded transition-colors duration-300 bg-[hsl(240_5%_64.9%)] dark:bg-[hsl(240_5%_26%)]"></div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground mt-4 text-center">Easy on the eyes with automatic dark mode</p>
-              </div>
+            {/* App Flow Timeline */}
+            <div className="max-w-6xl mx-auto mb-16">
+              <AppFlowTimeline />
             </div>
           </div>
         </section>
@@ -440,9 +324,59 @@ export function LandingPage() {
               </Link>
             </div>
           </div>
-          <div className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">
-            <p>Community page coming soon — a place to discover and join open conversations.</p>
-            <p className="mt-2">© {new Date().getFullYear()} Roomble. All rights reserved.</p>
+          
+          <div className="mt-8 pt-6 border-t">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                <p>Community page coming soon — a place to discover and join open conversations.</p>
+                <p className="mt-2">© {new Date().getFullYear()} Roomble. All rights reserved.</p>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Created by:</span>
+                <div className="scale-90 origin-right">
+                  <AvatarStack animate>
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <Avatar className="cursor-pointer">
+                          <AvatarImage src="/profilepic.jpg" />
+                          <AvatarFallback>S</AvatarFallback>
+                        </Avatar>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-60">
+                        <div className="flex justify-between space-x-4">
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-semibold">Sarvesh</h4>
+                            <p className="text-xs text-muted-foreground">SDE Intern at Lowe&apos;s</p>
+                            <div className="flex items-center pt-2 space-x-2">
+                              <a
+                                href="https://github.com/sarvesh-official"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1 rounded-full transition-colors"
+                              >
+                                GitHub
+                              </a>
+                              <a
+                                href="https://sarvee.dev"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs bg-muted hover:bg-muted/80 px-3 py-1 rounded-full transition-colors"
+                              >
+                                Portfolio
+                              </a>
+                            </div>
+                          </div>
+                          <div className="h-12 w-12 rounded-full overflow-hidden">
+                            <img src="/profilepic.jpg" alt="Sarvesh" className="object-cover w-full h-full" />
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                  </AvatarStack>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

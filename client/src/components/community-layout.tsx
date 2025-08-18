@@ -243,7 +243,7 @@ export function CommunityLayout() {
             </div>
             
             <div className="flex items-center space-x-2">
-              <ThemeToggleButton/>
+              <ThemeToggleButton randomize={true}/>
               <Button variant="outline" onClick={handleCreateRoom}>
                 Create Room
               </Button>

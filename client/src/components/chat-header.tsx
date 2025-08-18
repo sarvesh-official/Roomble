@@ -12,8 +12,8 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from './ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { VisibilitySelector } from './visibility-selector';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { Users } from 'lucide-react';
+import { ThemeToggleButton } from './ui/theme-toggle-button';
 
 interface ChatHeaderProps {
   memberCount?: number;
@@ -64,7 +64,7 @@ export function ChatHeader({ memberCount = 24 }: ChatHeaderProps) {
           <span>{memberCount}</span>
         </div>
         
-        <ThemeToggle variant="animated" />
+        <ThemeToggleButton randomize={true} />
         
         <ShareButton />
       </div>
