@@ -16,13 +16,12 @@ interface MapProps {
     lng: number;
     label?: string;
   }>;
-  lineColor?: string;
 }
+
 
 export function WorldMap({
   dots = [],
   points = [],
-  lineColor = "currentColor",
 }: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [mounted, setMounted] = useState(false);

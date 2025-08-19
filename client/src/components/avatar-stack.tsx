@@ -15,14 +15,14 @@ const AvatarStackExample = () => (
     <Glimpse closeDelay={0} openDelay={0}>
       <GlimpseTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarImage src="/profilepic.jpg" />
+          <AvatarImage src="/profilepic.png" className='h-12 w-12' />
           <AvatarFallback>Sarvesh</AvatarFallback>
         </Avatar>
       </GlimpseTrigger>
       <GlimpseContent className="w-80 bg-card border shadow-lg p-4">
         <div className="flex gap-4 items-start">
           <div className="w-16 h-16 rounded-full overflow-hidden">
-            <Image src="/profilepic.jpg" alt="Sarvesh" width={64} height={64} className="object-cover" />
+            <Image src="/profilepic.png" alt="Sarvesh" width={64} height={64}/>
           </div>
           <div>
             <GlimpseTitle className="font-semibold text-lg">Sarvesh</GlimpseTitle>

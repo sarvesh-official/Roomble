@@ -39,7 +39,6 @@ export function ContainerTextFlip({
   };
 
   useEffect(() => {
-    // Update width whenever the word changes
     updateWidthForWord();
   }, [currentWordIndex]);
 

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Search, X, Grid, List, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -132,11 +132,11 @@ interface Room {
 export function CommunityLayout() {
   const router = useRouter();
   const [rooms, setRooms] = useState(MOCK_ROOMS);
-  const [categories, setCategories] = useState(MOCK_CATEGORIES);
+  const [categories] = useState(MOCK_CATEGORIES);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+
   // Filters and view state
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('recently_created');
@@ -146,25 +146,25 @@ export function CommunityLayout() {
   // Define loadRooms function with useCallback to avoid dependency issues
   const loadRooms = useCallback(() => {
     setLoading(true);
-    
+
     // Simulate API call with setTimeout
     setTimeout(() => {
       try {
         // Filter rooms based on category and search query
         let filteredRooms = [...MOCK_ROOMS];
-        
+
         if (selectedCategory !== 'all') {
           filteredRooms = filteredRooms.filter(room => room.category === selectedCategory);
         }
-        
+
         if (searchQuery.trim()) {
           const query = searchQuery.toLowerCase().trim();
-          filteredRooms = filteredRooms.filter(room => 
-            room.name.toLowerCase().includes(query) || 
+          filteredRooms = filteredRooms.filter(room =>
+            room.name.toLowerCase().includes(query) ||
             room.description.toLowerCase().includes(query)
           );
         }
-        
+
         // Sort rooms
         switch (sortBy) {
           case 'recently_created':
@@ -180,10 +180,10 @@ export function CommunityLayout() {
             filteredRooms.sort((a, b) => b.messages - a.messages);
             break;
         }
-        
+
         setRooms(filteredRooms);
         setError(null);
-      } catch (err) {
+      } catch (_) {
         setError('Failed to load rooms. Please try again.');
         setRooms([]);
       } finally {
@@ -231,7 +231,7 @@ export function CommunityLayout() {
             </div>
             <span className="font-semibold text-xl">Roomble</span>
           </div>
-          
+
           <nav className="flex-1 flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button variant="ghost" className="text-foreground" onClick={() => router.push('/')}>
@@ -241,9 +241,12 @@ export function CommunityLayout() {
                 Community
               </Button>
             </div>
-            
+
             <div className="flex items-center space-x-2">
-              <ThemeToggleButton randomize={true}/>
+              <ThemeToggleButton
+                showLabel
+                randomize={true}
+              />
               <Button variant="outline" onClick={handleCreateRoom}>
                 Create Room
               </Button>
@@ -254,7 +257,7 @@ export function CommunityLayout() {
           </nav>
         </div>
       </header>
-      
+
       <main className="pt-24 pb-8 px-4 md:px-6 max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
@@ -266,28 +269,26 @@ export function CommunityLayout() {
               Join active discussions and connect with like-minded people
             </p>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             {/* View Toggle */}
             <div className="flex items-center rounded-lg border bg-background p-1">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`flex items-center justify-center rounded-md p-1.5 ${
-                  viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className={`flex items-center justify-center rounded-md p-1.5 ${viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 <Grid size={18} />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`flex items-center justify-center rounded-md p-1.5 ${
-                  viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className={`flex items-center justify-center rounded-md p-1.5 ${viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 <List size={18} />
               </button>
             </div>
-            
+
             {/* Sort Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -322,9 +323,9 @@ export function CommunityLayout() {
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative max-w-md">
-            <Search 
-              size={20} 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" 
+            <Search
+              size={20}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
             />
             <input
               type="text"
@@ -351,11 +352,10 @@ export function CommunityLayout() {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full whitespace-nowrap ${
-                  selectedCategory === category.id
+                className={`px-4 py-2 rounded-full whitespace-nowrap ${selectedCategory === category.id
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground hover:text-foreground'
-                }`}
+                  }`}
               >
                 {category.name}
               </button>
@@ -373,7 +373,7 @@ export function CommunityLayout() {
                 `Showing ${rooms.length} active rooms`
               )}
             </p>
-            
+
             {error && (
               <div className="text-sm text-destructive bg-destructive/10 px-3 py-1 rounded">
                 {error}
@@ -386,7 +386,7 @@ export function CommunityLayout() {
         {loading ? (
           <LoadingSkeleton viewMode={viewMode} />
         ) : rooms.length === 0 ? (
-          <EmptyState 
+          <EmptyState
             searchQuery={searchQuery}
             selectedCategory={selectedCategory}
             onClearFilters={() => {
@@ -397,8 +397,8 @@ export function CommunityLayout() {
           />
         ) : (
           <div className={
-            viewMode === 'grid' 
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
+            viewMode === 'grid'
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               : "space-y-4"
           }>
             {rooms.map((room) => (
@@ -450,13 +450,13 @@ interface RoomCardProps {
 function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: RoomCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', { 
-      month: 'short', 
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     }).format(date);
   };
-  
+
   if (viewMode === 'grid') {
     return (
       <div className="bg-card rounded-lg border shadow-sm overflow-hidden hover:shadow-md transition-shadow">
@@ -469,11 +469,11 @@ function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: RoomCardProps) {
               {room.category.charAt(0).toUpperCase() + room.category.slice(1)}
             </span>
           </div>
-          
+
           <p className="text-muted-foreground text-sm mb-4 line-clamp-2" title={room.description}>
             {room.description}
           </p>
-          
+
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
             <div className="flex items-center gap-3">
               <span>{room.members} members</span>
@@ -481,16 +481,16 @@ function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: RoomCardProps) {
             </div>
             <span>Created {formatDate(room.created_at)}</span>
           </div>
-          
+
           <div className="flex items-center justify-between">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={() => onRoomClick(room)}
             >
               Details
             </Button>
-            <Button 
+            <Button
               size="sm"
               onClick={() => onJoinRoom(room.id)}
             >
@@ -501,7 +501,7 @@ function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: RoomCardProps) {
       </div>
     );
   }
-  
+
   // List view
   return (
     <div className="bg-card rounded-lg border shadow-sm overflow-hidden hover:shadow-md transition-shadow">
@@ -513,11 +513,11 @@ function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: RoomCardProps) {
               {room.category.charAt(0).toUpperCase() + room.category.slice(1)}
             </span>
           </div>
-          
+
           <p className="text-muted-foreground text-sm mb-2 line-clamp-1">
             {room.description}
           </p>
-          
+
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <span>{room.members} members</span>
             <span>{room.messages} messages</span>
@@ -525,16 +525,16 @@ function RoomCard({ room, viewMode, onRoomClick, onJoinRoom }: RoomCardProps) {
             <span>Last active {formatDate(room.last_active)}</span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2 self-end md:self-center">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => onRoomClick(room)}
           >
             Details
           </Button>
-          <Button 
+          <Button
             size="sm"
             onClick={() => onJoinRoom(room.id)}
           >
@@ -556,29 +556,29 @@ interface RoomDetailModalProps {
 function RoomDetailModal({ room, onClose, onJoinRoom }: RoomDetailModalProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', { 
-      month: 'short', 
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     }).format(date);
   };
-  
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-card rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-start mb-4">
             <h2 className="text-2xl font-bold">{room.name}</h2>
-            <button 
+            <button
               onClick={onClose}
               className="text-muted-foreground hover:text-foreground"
             >
               <X size={24} />
             </button>
           </div>
-          
+
           <div className="space-y-6">
             <div>
               <span className="inline-block text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full mb-2">
@@ -586,7 +586,7 @@ function RoomDetailModal({ room, onClose, onJoinRoom }: RoomDetailModalProps) {
               </span>
               <p className="text-foreground">{room.description}</p>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-muted/30 p-3 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-1">Members</div>
@@ -605,17 +605,17 @@ function RoomDetailModal({ room, onClose, onJoinRoom }: RoomDetailModalProps) {
                 <div className="text-sm font-medium">{formatDate(room.last_active)}</div>
               </div>
             </div>
-            
+
             <div>
               <div className="text-sm text-muted-foreground mb-2">Created by</div>
               <div className="flex items-center gap-2">
                 <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center">
                   {room.creator.avatar ? (
-                    <Image 
-                      src={room.creator.avatar} 
-                      alt={room.creator.name} 
-                      width={32} 
-                      height={32} 
+                    <Image
+                      src={room.creator.avatar}
+                      alt={room.creator.name}
+                      width={32}
+                      height={32}
                       className="rounded-full"
                     />
                   ) : (
@@ -627,7 +627,7 @@ function RoomDetailModal({ room, onClose, onJoinRoom }: RoomDetailModalProps) {
                 <span className="font-medium">{room.creator.name}</span>
               </div>
             </div>
-            
+
             <div className="pt-4 border-t flex justify-end">
               <Button onClick={() => onJoinRoom(room.id)}>
                 Join Room
@@ -644,8 +644,8 @@ function RoomDetailModal({ room, onClose, onJoinRoom }: RoomDetailModalProps) {
 function LoadingSkeleton({ viewMode }: { viewMode: string }) {
   return (
     <div className={
-      viewMode === 'grid' 
-        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
+      viewMode === 'grid'
+        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         : "space-y-4"
     }>
       {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -655,10 +655,10 @@ function LoadingSkeleton({ viewMode }: { viewMode: string }) {
               <div className="h-6 bg-muted rounded w-3/4 animate-pulse"></div>
               <div className="h-5 bg-muted rounded-full w-16 animate-pulse"></div>
             </div>
-            
+
             <div className="h-4 bg-muted rounded w-full mb-2 animate-pulse"></div>
             <div className="h-4 bg-muted rounded w-5/6 mb-4 animate-pulse"></div>
-            
+
             <div className="flex items-center justify-between mb-4">
               <div className="flex gap-2">
                 <div className="h-3 bg-muted rounded w-16 animate-pulse"></div>
@@ -666,7 +666,7 @@ function LoadingSkeleton({ viewMode }: { viewMode: string }) {
               </div>
               <div className="h-3 bg-muted rounded w-24 animate-pulse"></div>
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="h-8 bg-muted rounded w-20 animate-pulse"></div>
               <div className="h-8 bg-muted rounded w-20 animate-pulse"></div>
@@ -686,20 +686,20 @@ interface EmptyStateProps {
   onCreateRoom: () => void;
 }
 
-function EmptyState({ 
-  searchQuery, 
-  selectedCategory, 
-  onClearFilters, 
-  onCreateRoom 
+function EmptyState({
+  searchQuery,
+  selectedCategory,
+  onClearFilters,
+  onCreateRoom
 }: EmptyStateProps) {
   return (
     <div className="text-center py-16 px-4">
       <div className="size-16 mx-auto mb-4 bg-muted/30 rounded-full flex items-center justify-center">
         <Search size={32} className="text-muted-foreground" />
       </div>
-      
+
       <h3 className="text-xl font-semibold mb-2">No rooms found</h3>
-      
+
       {searchQuery || selectedCategory !== 'all' ? (
         <>
           <p className="text-muted-foreground mb-6">
@@ -716,7 +716,7 @@ function EmptyState({
           </p>
         </>
       )}
-      
+
       <Button onClick={onCreateRoom}>
         Create a Room
       </Button>

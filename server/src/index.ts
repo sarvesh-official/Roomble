@@ -12,4 +12,5 @@ let allSockets : User[] = [];
 
 wss.on("connection", (ws) => {
     console.log("Client connected");
+    
 })

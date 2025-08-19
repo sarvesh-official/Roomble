@@ -64,8 +64,9 @@ export function ChatHeader({ memberCount = 24 }: ChatHeaderProps) {
           <span>{memberCount}</span>
         </div>
         
-        <ThemeToggleButton randomize={true} />
-        
+        <ThemeToggleButton
+          randomize={true}
+        />
         <ShareButton />
       </div>
     </header>

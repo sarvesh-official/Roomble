@@ -5,7 +5,6 @@ export type AnimationStart =
   | "top-right"
   | "bottom-left"
   | "bottom-right"
-  | "center"
 
 interface Animation {
   name: string
@@ -26,8 +25,6 @@ const getPositionCoords = (position: AnimationStart) => {
 }
 
 const generateSVG = (variant: AnimationVariant, start: AnimationStart) => {
-  if (start === "center") return
-
   const positionCoords = getPositionCoords(start)
   if (!positionCoords) {
     throw new Error(`Invalid start position: ${start}`)
@@ -108,48 +105,7 @@ export const createAnimation = (
       `,
     }
   }
-  if (variant === "circle" && start == "center") {
-    return {
-      name: `${variant}-${start}`,
-      css: `
-       ::view-transition-group(root) {
-        animation-duration: 0.7s;
-        animation-timing-function: var(--expo-out);
-      }
-            
-      ::view-transition-new(root) {
-        animation-name: reveal-light;
-      }
-
-      ::view-transition-old(root),
-      .dark::view-transition-old(root) {
-        animation: none;
-        z-index: -1;
-      }
-      .dark::view-transition-new(root) {
-        animation-name: reveal-dark;
-      }
-
-      @keyframes reveal-dark {
-        from {
-          clip-path: circle(0% at 50% 50%);
-        }
-        to {
-          clip-path: circle(100.0% at 50% 50%);
-        }
-      }
-
-      @keyframes reveal-light {
-        from {
-           clip-path: circle(0% at 50% 50%);
-        }
-        to {
-          clip-path: circle(100.0% at 50% 50%);
-        }
-      }
-      `,
-    }
-  }
+  // Center animation removed
   if (variant === "gif") {
     return {
       name: `${variant}-${start}`,

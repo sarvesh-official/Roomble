@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BentoGrid } from './ui/bento-grid';
-import { Code, FileText, Layers, MessageSquare, Users, Video, Zap } from 'lucide-react';
+import { FileText, Layers, MessageSquare, Users, Video, Zap } from 'lucide-react';
 
 export function WhyRoomble() {
   const items = [

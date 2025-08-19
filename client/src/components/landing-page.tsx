@@ -19,6 +19,7 @@ import { AppFlowTimeline } from './app-flow-timeline';
 import { AvatarStack } from '@/components/ui/avatar-stack';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { AnimatedTooltipPreview } from "./animated-tooltip-preview";
 import {
   Navbar,
   NavBody,
@@ -35,10 +36,10 @@ export function LandingPage() {
   const [roomIdInput, setRoomIdInput] = useState('');
   const [roomIdError, setRoomIdError] = useState('');
   const { resolvedTheme } = useTheme();
-  const isDarkTheme = resolvedTheme === 'dark';
+  // isDarkTheme is used for conditional styling
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  
+
   // Set mounted state after hydration
   useEffect(() => {
     setMounted(true);
@@ -47,14 +48,14 @@ export function LandingPage() {
   const handleCreateRoom = () => {
     setIsCreatingRoom(true);
     const roomId = generateRoomId();
-    
+
     // Store username if provided in previous sessions
     const storedUsername = localStorage.getItem('roomble-username');
     if (!storedUsername) {
       // Set a default username if none exists
       localStorage.setItem('roomble-username', 'Guest-' + Math.floor(Math.random() * 1000));
     }
-    
+
     setTimeout(() => {
       router.push(`/room/${roomId}`);
     }, 500);
@@ -89,7 +90,10 @@ export function LandingPage() {
           </div>
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <ThemeToggleButton randomize={true} />
+            <ThemeToggleButton
+              showLabel
+              randomize={true}
+            />
           </div>
         </NavBody>
 
@@ -103,7 +107,10 @@ export function LandingPage() {
               <span className="font-semibold text-xl">Roomble</span>
             </div>
             <div className="flex items-center gap-2">
-              <ThemeToggleButton randomize={true} />
+            <ThemeToggleButton
+              showLabel
+              randomize={true}
+            />
               <MobileNavToggle
                 isOpen={isMobileMenuOpen}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -149,32 +156,33 @@ export function LandingPage() {
             </TextReveal>
             <TextReveal delay={0.9}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="sm:w-auto w-full gap-2 px-6"
                   onClick={handleCreateRoom}
                   disabled={isCreatingRoom}
                 >
                   {isCreatingRoom ? 'Creating...' : 'Create Room'}
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
+                <Button
+                  variant="outline"
+                  size="lg"
                   className="sm:w-auto w-full gap-2 px-6"
                   asChild
-                >   
+                >
                   <Link href="#join">Join Room</Link>
                 </Button>
               </div>
             </TextReveal>
           </div>
         </section>
-
+        <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-60 right-10 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
         {/* Features Section */}
         <WhyRoomble />
-        
+
         {/* Global Connectivity Section */}
-        <section className="py-20 md:py-32 bg-gradient-to-b from-background to-muted/30">
+        {/* <section className="py-20 md:py-32 bg-gradient-to-b from-background to-muted/30">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Global Connectivity</h2>
@@ -185,17 +193,17 @@ export function LandingPage() {
             
             <GlobalConnectivityBento />
           </div>
-        </section>
+        </section> */}
 
         {/* Feature Section */}
         <FeatureSection />
-        
+
         {/* See in Action Section */}
         <section className="py-20 md:py-32 bg-gradient-to-b from-background to-muted/30 relative overflow-hidden">
           {/* Background decorative elements */}
           <div className="absolute top-40 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
           <div className="absolute bottom-40 right-10 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <div className="flex flex-col items-center mb-8">
               <div className="relative size-12 mb-6">
@@ -208,14 +216,14 @@ export function LandingPage() {
               </div>
               <div className="h-1 w-24 bg-gradient-to-r from-primary/30 to-primary/70 rounded-full my-6"></div>
               <p className="text-muted-foreground max-w-2xl text-center text-lg mb-2">
-                Experience the simplicity and power of Roomble&apos;s real-time collaboration. 
+                Experience the simplicity and power of Roomble&apos;s real-time collaboration.
                 <span className="text-primary font-medium"> Connect instantly</span> with anyone, anywhere.
               </p>
               <p className="text-primary/80 font-medium text-lg mb-8">
                 Follow the journey of how users interact with Roomble from start to finish
               </p>
             </div>
-            
+
             {/* App Flow Timeline */}
             <div className="max-w-6xl mx-auto mb-16">
               <AppFlowTimeline />
@@ -238,8 +246,8 @@ export function LandingPage() {
             </div>
             <div className="max-w-lg mx-auto">
               <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="sm:w-auto w-full gap-2 px-6"
                   onClick={handleCreateRoom}
                   disabled={isCreatingRoom}
@@ -248,9 +256,9 @@ export function LandingPage() {
                   {!isCreatingRoom && <ArrowRight size={16} />}
                 </Button>
                 <div className="relative sm:w-56 w-full">
-                  <input 
-                    type="text" 
-                    placeholder="Enter room ID" 
+                  <input
+                    type="text"
+                    placeholder="Enter room ID"
                     className={`w-full h-11 px-4 rounded-md border bg-background ${roomIdError ? 'border-destructive' : ''}`}
                     value={roomIdInput}
                     onChange={(e) => {
@@ -261,8 +269,8 @@ export function LandingPage() {
                   {roomIdError && (
                     <p className="text-xs text-destructive mt-1">{roomIdError}</p>
                   )}
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="absolute right-1 top-1 bottom-1"
                     onClick={() => {
                       // Validate room ID
@@ -270,20 +278,20 @@ export function LandingPage() {
                         setRoomIdError('Please enter a room ID');
                         return;
                       }
-                      
+
                       // Basic validation - alphanumeric and reasonable length
                       if (!/^[a-zA-Z0-9-_]{3,16}$/.test(roomIdInput.trim())) {
                         setRoomIdError('Invalid room ID format');
                         return;
                       }
-                      
+
                       // Store username if provided in previous sessions
                       const storedUsername = localStorage.getItem('roomble-username');
                       if (!storedUsername) {
                         // Set a default username if none exists
                         localStorage.setItem('roomble-username', 'Guest-' + Math.floor(Math.random() * 1000));
                       }
-                      
+
                       router.push(`/room/${roomIdInput.trim()}`);
                     }}
                   >
@@ -316,64 +324,23 @@ export function LandingPage() {
               <Link href="https://github.com/sarvesh-official/Roomble" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 GitHub
               </Link>
-              <Link href="/theme-toggle-demo" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Theme Toggle Demo
-              </Link>
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Contact
               </Link>
             </div>
           </div>
-          
+
           <div className="mt-8 pt-6 border-t">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="text-sm text-muted-foreground">
                 <p>Community page coming soon — a place to discover and join open conversations.</p>
                 <p className="mt-2">© {new Date().getFullYear()} Roomble. All rights reserved.</p>
               </div>
-              
-              <div className="flex items-center gap-2">
+
+              <div className="flex flex-col md:flex-row items-center gap-3">
                 <span className="text-sm text-muted-foreground">Created by:</span>
-                <div className="scale-90 origin-right">
-                  <AvatarStack animate>
-                    <HoverCard>
-                      <HoverCardTrigger asChild>
-                        <Avatar className="cursor-pointer">
-                          <AvatarImage src="/profilepic.jpg" />
-                          <AvatarFallback>S</AvatarFallback>
-                        </Avatar>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="w-60">
-                        <div className="flex justify-between space-x-4">
-                          <div className="space-y-1">
-                            <h4 className="text-sm font-semibold">Sarvesh</h4>
-                            <p className="text-xs text-muted-foreground">SDE Intern at Lowe&apos;s</p>
-                            <div className="flex items-center pt-2 space-x-2">
-                              <a
-                                href="https://github.com/sarvesh-official"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1 rounded-full transition-colors"
-                              >
-                                GitHub
-                              </a>
-                              <a
-                                href="https://sarvee.dev"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs bg-muted hover:bg-muted/80 px-3 py-1 rounded-full transition-colors"
-                              >
-                                Portfolio
-                              </a>
-                            </div>
-                          </div>
-                          <div className="h-12 w-12 rounded-full overflow-hidden">
-                            <img src="/profilepic.jpg" alt="Sarvesh" className="object-cover w-full h-full" />
-                          </div>
-                        </div>
-                      </HoverCardContent>
-                    </HoverCard>
-                  </AvatarStack>
+                <div>
+                  <AnimatedTooltipPreview />
                 </div>
               </div>
             </div>

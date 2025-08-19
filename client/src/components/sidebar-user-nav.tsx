@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronUp, Palette, User } from 'lucide-react';
-import Link from 'next/link';
+import { ChevronUp } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 import {
@@ -99,12 +98,6 @@ export function SidebarUserNav({ username }: SidebarUserNavProps) {
               onSelect={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
             >
               {`Toggle ${resolvedTheme === 'light' ? 'dark' : 'light'} mode`}
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/theme-toggle-demo" className="flex w-full cursor-pointer items-center">
-                <Palette className="mr-2 h-4 w-4" />
-                Theme Toggle Demo
-              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild data-testid="user-nav-item-auth">

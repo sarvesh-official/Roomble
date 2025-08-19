@@ -1,6 +1,7 @@
 'use client';
 import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
+import Image from 'next/image';
 import {
   HoverCard,
   HoverCardContent,
@@ -36,19 +37,20 @@ export const GlimpseDescription = ({
     />
   );
 };
-export type GlimpseImageProps = ComponentProps<'img'>;
+export type GlimpseImageProps = ComponentProps<typeof Image>;
 export const GlimpseImage = ({
   className,
   alt,
   ...props
 }: GlimpseImageProps) => (
-  // biome-ignore lint/performance/noImgElement: "Kibo UI is framework agnostic"
-  <img
+  <Image
     alt={alt ?? ''}
     className={cn(
       'mb-4 aspect-[120/63] w-full rounded-md border object-cover',
       className
     )}
+    width={400}
+    height={210}
     {...props}
   />
 );

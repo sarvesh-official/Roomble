@@ -19,7 +19,6 @@ export const BentoGridItem = ({
   description,
   icon,
   className,
-  size = 'small',
   customContent,
 }: BentoGridItemProps) => {
   const variants = {
