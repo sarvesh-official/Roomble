@@ -42,7 +42,7 @@ export function ThemeToggleButton({
   }, [])
 
   const getRandomAnimation = React.useCallback(() => {
-    const variants: AnimationVariant[] = ["circle", "circle-blur", "polygon", "gif"]
+    const variants: AnimationVariant[] = ["circle-blur", "circle", "gif"]
     const positions: AnimationStart[] = ["top-left", "top-right", "bottom-left", "bottom-right"]
     
     const randomVariant = variants[Math.floor(Math.random() * variants.length)]
