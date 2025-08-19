@@ -36,7 +36,6 @@ export function LandingPage() {
   const [roomIdInput, setRoomIdInput] = useState('');
   const [roomIdError, setRoomIdError] = useState('');
   const { resolvedTheme } = useTheme();
-  // isDarkTheme is used for conditional styling
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -91,7 +90,6 @@ export function LandingPage() {
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
             <ThemeToggleButton
-              showLabel
               randomize={true}
             />
           </div>
@@ -108,7 +106,6 @@ export function LandingPage() {
             </div>
             <div className="flex items-center gap-2">
             <ThemeToggleButton
-              showLabel
               randomize={true}
             />
               <MobileNavToggle
@@ -120,7 +117,6 @@ export function LandingPage() {
 
           <MobileNavMenu
             isOpen={isMobileMenuOpen}
-            onClose={() => setIsMobileMenuOpen(false)}
           >
             {navItems.map((item, idx) => (
               <a

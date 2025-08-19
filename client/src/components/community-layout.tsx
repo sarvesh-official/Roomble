@@ -183,7 +183,7 @@ export function CommunityLayout() {
 
         setRooms(filteredRooms);
         setError(null);
-      } catch (_) {
+      } catch (error) {
         setError('Failed to load rooms. Please try again.');
         setRooms([]);
       } finally {
@@ -244,7 +244,6 @@ export function CommunityLayout() {
 
             <div className="flex items-center space-x-2">
               <ThemeToggleButton
-                showLabel
                 randomize={true}
               />
               <Button variant="outline" onClick={handleCreateRoom}>

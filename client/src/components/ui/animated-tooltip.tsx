@@ -75,14 +75,14 @@ export const AnimatedTooltip = ({
                     translateX,
                     rotate,
                   }}
-                  className="absolute -top-24 -left-12 z-50 w-max max-w-[180px] flex flex-col items-center justify-center rounded-md bg-black shadow-xl px-4 py-2"
+                  className="absolute -top-24 -left-12 z-50 w-max max-w-[180px] flex flex-col items-center justify-center rounded-md bg-black dark:bg-black bg-white shadow-xl px-4 py-2"
                 >
                   <div className="absolute inset-x-10 z-30 w-[20%] -bottom-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent h-px" />
                   <div className="absolute left-10 w-[40%] z-30 -bottom-px bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px" />
-                  <div className="font-bold text-white relative z-30 text-sm whitespace-nowrap">
+                  <div className="font-bold text-foreground dark:text-white relative z-30 text-sm whitespace-nowrap">
                     {item.name}
                   </div>
-                  <div className="text-white text-xs whitespace-nowrap">{item.designation}</div>
+                  <div className="text-foreground dark:text-white text-xs whitespace-nowrap">{item.designation}</div>
                   <div className="flex items-center space-x-2 mt-1">
                     {item.githubUrl && (
                       <a
@@ -99,13 +99,13 @@ export const AnimatedTooltip = ({
                         href={item.portfolioUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[10px] bg-muted hover:bg-muted/80 text-white px-2 py-0.5 rounded-full transition-colors"
+                        className="text-[10px] bg-primary/10 hover:bg-primary/20 text-primary px-2 py-0.5 rounded-full transition-colors"
                       >
                         Portfolio
                       </a>
                     )}
                   </div>
-                  <div className="absolute bottom-[-6px] left-6 w-3 h-3 bg-black rotate-45"></div>
+                  <div className="absolute bottom-[-6px] left-6 w-3 h-3 bg-white dark:bg-black rotate-45"></div>
                 </motion.div>
               )}
             </AnimatePresence>

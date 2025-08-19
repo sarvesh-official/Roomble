@@ -14,7 +14,7 @@ export function AppFlowTimeline() {
           </p>
           <p className="text-sm md:text-base">
             Roomble makes it easy to create a new room for your meetings, study sessions, or casual hangouts.
-            Just click the "Create Room" button and you'll get a unique room ID that you can share with others.
+            Just click the &quot;Create Room&quot; button and you&apos;ll get a unique room ID that you can share with others.
           </p>
         </div>
       ),
@@ -41,7 +41,7 @@ export function AppFlowTimeline() {
             Connect face-to-face with crystal-clear video calls, screen sharing, and interactive features.
           </p>
           <p className="text-sm md:text-base">
-            Roomble's video conferencing capabilities allow for high-quality video and audio communication.
+            Roomble&apos;s video conferencing capabilities allow for high-quality video and audio communication.
             Toggle your camera and microphone, share your screen, and use interactive whiteboard features
             to collaborate effectively with your team or friends.
           </p>

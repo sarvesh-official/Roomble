@@ -24,7 +24,6 @@ export const THEME_TOGGLE_GIFS = [
 interface ThemeToggleAnimationProps {
   variant?: AnimationVariant
   start?: AnimationStart
-  showLabel?: boolean
   url?: string
   randomize?: boolean
 }
@@ -32,7 +31,6 @@ interface ThemeToggleAnimationProps {
 export function ThemeToggleButton({
   variant = "circle-blur",
   start = "top-left",
-  showLabel = false,
   url = "",
   randomize = false
 }: ThemeToggleAnimationProps) {
@@ -63,7 +61,7 @@ export function ThemeToggleButton({
 
   const styleId = "theme-transition-styles"
 
-  const updateStyles = React.useCallback((css: string, name: string) => {
+  const updateStyles = React.useCallback((css: string) => {
     if (typeof window === "undefined") return
 
     let styleElement = document.getElementById(styleId) as HTMLStyleElement
@@ -95,7 +93,7 @@ export function ThemeToggleButton({
     }
     
     const animation = createAnimation(animVariant, animStart, animUrl)
-    updateStyles(animation.css, animation.name)
+    updateStyles(animation.css)
 
     if (typeof window === "undefined") return
 

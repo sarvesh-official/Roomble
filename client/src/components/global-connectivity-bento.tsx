@@ -3,7 +3,6 @@
 import React from 'react';
 import { BentoGrid } from './ui/bento-grid';
 import { Zap, Clock, Users, Laptop, Shield } from 'lucide-react';
-import { WorldMap } from './ui/world-map-demo';
 
 export function GlobalConnectivityBento() {
   // Items for the bento grid on the left side
