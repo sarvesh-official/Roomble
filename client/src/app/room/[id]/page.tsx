@@ -101,7 +101,6 @@ export default function RoomPage() {
     );
   }
 
-  // Show chat interface once joined
   return (
     <SidebarProvider>
       <ChatLayout />
