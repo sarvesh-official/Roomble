@@ -35,11 +35,9 @@ export function LandingPage() {
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
   const [roomIdInput, setRoomIdInput] = useState('');
   const [roomIdError, setRoomIdError] = useState('');
-  const { resolvedTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Set mounted state after hydration
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -48,10 +46,8 @@ export function LandingPage() {
     setIsCreatingRoom(true);
     const roomId = generateRoomId();
 
-    // Store username if provided in previous sessions
     const storedUsername = localStorage.getItem('roomble-username');
     if (!storedUsername) {
-      // Set a default username if none exists
       localStorage.setItem('roomble-username', 'Guest-' + Math.floor(Math.random() * 1000));
     }
 
@@ -214,9 +210,6 @@ export function LandingPage() {
               <p className="text-muted-foreground max-w-2xl text-center text-lg mb-2">
                 Experience the simplicity and power of Roomble&apos;s real-time collaboration.
                 <span className="text-primary font-medium"> Connect instantly</span> with anyone, anywhere.
-              </p>
-              <p className="text-primary/80 font-medium text-lg mb-8">
-                Follow the journey of how users interact with Roomble from start to finish
               </p>
             </div>
 
