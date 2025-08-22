@@ -106,14 +106,14 @@ export function LandingPage() {
         {/* Header with Resizable Navbar */}
         <Navbar className="top-0">
           {/* Desktop Navigation */}
-          <NavBody>
+          <NavBody className="" visible={false}>
             <div className="flex items-center gap-2">
               <div className="size-8 overflow-hidden">
                 <Image src="/icon.png" alt="Roomble" width={32} height={32} className="w-full h-full object-contain" />
               </div>
               <span className="font-semibold text-xl">Roomble</span>
             </div>
-            <NavItems items={navItems} />
+            <NavItems className="" items={navItems} onItemClick={() => {}} />
             <div className="flex items-center gap-4">
               <ThemeToggleButton
                 randomize={true}
@@ -122,8 +122,8 @@ export function LandingPage() {
           </NavBody>
 
           {/* Mobile Navigation */}
-          <MobileNav>
-            <MobileNavHeader>
+          <MobileNav className="" visible={false}>
+            <MobileNavHeader className="">
               <div className="flex items-center gap-2">
                 <div className="size-8 overflow-hidden">
                   <Image src="/icon.png" alt="Roomble" width={32} height={32} className="w-full h-full object-contain" />
@@ -143,6 +143,8 @@ export function LandingPage() {
 
             <MobileNavMenu
               isOpen={isMobileMenuOpen}
+              onClose={() => setIsMobileMenuOpen(false)}
+              className=""
             >
               {navItems.map((item, idx) => (
                 <a
