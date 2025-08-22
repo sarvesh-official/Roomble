@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Search, X, Grid, List, ChevronDown } from 'lucide-react';
+import { useAuth } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { generateRoomId } from '@/lib/utils';
 import { ThemeToggleButton } from './ui/theme-toggle-button';
+import UserDropdown from './user-dropdown';
 
 // Mock data for initial development
 const MOCK_CATEGORIES = [
@@ -131,6 +133,7 @@ interface Room {
 
 export function CommunityLayout() {
   const router = useRouter();
+  const { isLoaded, userId } = useAuth();
   const [rooms, setRooms] = useState(MOCK_ROOMS);
   const [categories] = useState(MOCK_CATEGORIES);
   const [loading, setLoading] = useState(false);
@@ -202,6 +205,12 @@ export function CommunityLayout() {
   };
 
   const handleJoinRoom = (roomId: string) => {
+    // If not authenticated, redirect to sign-in
+    if (!isLoaded || !userId) {
+      router.push('/sign-in');
+      return;
+    }
+    
     // In a real app, you would call an API to join the room
     // For now, just navigate to the room
     router.push(`/room/${roomId}`);
@@ -216,6 +225,12 @@ export function CommunityLayout() {
   };
 
   const handleCreateRoom = () => {
+    // If not authenticated, redirect to sign-in
+    if (!isLoaded || !userId) {
+      router.push('/sign-in');
+      return;
+    }
+    
     const roomId = generateRoomId();
     router.push(`/room/${roomId}`);
   };
@@ -249,9 +264,13 @@ export function CommunityLayout() {
               <Button variant="outline" onClick={handleCreateRoom}>
                 Create Room
               </Button>
-              <Button variant="default">
-                Sign In
-              </Button>
+              {isLoaded && userId ? (
+                <UserDropdown />
+              ) : (
+                <Button variant="default" onClick={() => router.push('/sign-in')}>
+                  Sign In
+                </Button>
+              )}
             </div>
           </nav>
         </div>
@@ -691,6 +710,17 @@ function EmptyState({
   onClearFilters,
   onCreateRoom
 }: EmptyStateProps) {
+  const { isLoaded, userId } = useAuth();
+  const router = useRouter();
+
+  const handleCreateRoomClick = () => {
+    if (!isLoaded || !userId) {
+      router.push('/sign-in');
+      return;
+    }
+    onCreateRoom();
+  };
+
   return (
     <div className="text-center py-16 px-4">
       <div className="size-16 mx-auto mb-4 bg-muted/30 rounded-full flex items-center justify-center">
@@ -716,9 +746,15 @@ function EmptyState({
         </>
       )}
 
-      <Button onClick={onCreateRoom}>
-        Create a Room
-      </Button>
+      {isLoaded && !userId ? (
+        <Button onClick={() => router.push('/sign-in')}>
+          Sign In to Create a Room
+        </Button>
+      ) : (
+        <Button onClick={handleCreateRoomClick}>
+          Create a Room
+        </Button>
+      )}
     </div>
   );
 }
