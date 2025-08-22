@@ -1,7 +1,6 @@
 'use client';
 import {
   motion,
-  MotionValue,
   Transition,
   useAnimation,
   useMotionValue,
