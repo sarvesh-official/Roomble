@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from "react"
 import { OTPInput, SlotProps } from "input-otp"
-
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,

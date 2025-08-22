@@ -19,7 +19,6 @@ import {
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
-    AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
@@ -129,8 +128,7 @@ const mockRooms: Room[] = [
 
 export default function DashboardPage() {
     const router = useRouter();
-    const { user, isLoaded } = useUser();
-    const { theme } = useTheme();
+    const { user } = useUser();
     const [isCreatingRoom, setIsCreatingRoom] = useState(false);
     const [joinRoomModalOpen, setJoinRoomModalOpen] = useState(false);
     const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
@@ -148,7 +146,7 @@ export default function DashboardPage() {
     const [activeTab, setActiveTab] = useState('all');
     const [visibilityTab, setVisibilityTab] = useState('public');
     const [mounted, setMounted] = useState(false);
-    const [rooms, setRooms] = useState<Room[]>(mockRooms);
+    const [rooms] = useState<Room[]>(mockRooms);
 
     useEffect(() => {
         setMounted(true);
@@ -185,31 +183,7 @@ export default function DashboardPage() {
         }, 1000);
     };
 
-    const handleJoinRoom = () => {
-        // Validate room ID
-        if (!roomIdInput.trim()) {
-            setRoomIdError('Please enter a room ID');
-            return;
-        }
-
-        // Basic validation - alphanumeric and reasonable length
-        if (!/^[a-zA-Z0-9-_]{3,16}$/.test(roomIdInput.trim())) {
-            setRoomIdError('Invalid room ID format');
-            return;
-        }
-
-        // Show verification step
-        setIsVerifyingCode(true);
-    };
-
-    const handleCodeComplete = (code: string) => {
-        // In a real app, you would verify the code with your backend
-        // For now, we'll just simulate a verification delay
-        router.push(`/room/${roomIdInput.trim()}`);
-        setJoinRoomModalOpen(false);
-        setIsVerifyingCode(false);
-        setRoomIdInput('');
-    };
+    // Room functions are handled by the EnhancedOTPInput component
 
     // Don't render until client-side to prevent hydration mismatch
     if (!mounted) {
@@ -485,7 +459,7 @@ export default function DashboardPage() {
                 }}
                 title="Join a Room"
                 description="Enter the 6-digit code to join this room"
-                onSuccess={(code) => {
+                onSuccess={() => {
                     router.push(`/room/${roomIdInput.trim()}`);
                     setJoinRoomModalOpen(false);
                     setIsVerifyingCode(false);

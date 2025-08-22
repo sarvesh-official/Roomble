@@ -9,7 +9,7 @@ import { useAuth } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 
 import EnhancedOTPInput from '@/components/enhanced-otp-input';
-import { generateRoomId, cn } from '@/lib/utils';
+import { generateRoomId } from '@/lib/utils';
 import { WhyRoomble } from "./why-roomble";
 import FeatureSection from "./feature-section";
 import { GradientBars } from '@/components/ui/gradient-bars';
@@ -36,14 +36,8 @@ export function LandingPage() {
   const [roomIdError, setRoomIdError] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [joinRoomModalOpen, setJoinRoomModalOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [verificationStep, setVerificationStep] = useState<'roomId' | 'code'>('roomId');
-  const [verificationCode, setVerificationCode] = useState('');
   const [verificationError, setVerificationError] = useState('');
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleCreateRoom = () => {
     // If not authenticated, redirect to sign-in
@@ -89,16 +83,7 @@ export function LandingPage() {
     setVerificationError('');
   };
 
-  const handleVerifyCode = (code: string) => {
-    // Store username if provided in previous sessions
-    const storedUsername = localStorage.getItem('roomble-username');
-    if (!storedUsername) {
-      // Set a default username if none exists
-      localStorage.setItem('roomble-username', 'Guest-' + Math.floor(Math.random() * 1000));
-    }
-
-    router.push(`/room/${roomIdInput.trim()}`);
-  };
+  // Room verification is handled by the EnhancedOTPInput component
 
   const navItems = [
     {
@@ -330,7 +315,7 @@ export function LandingPage() {
                       }
                     }}
                     title="Join a Room"
-                    onSuccess={(code) => {
+                    onSuccess={() => {
                       router.push(`/room/${roomIdInput.trim()}`);
                       setJoinRoomModalOpen(false);
                       setRoomIdInput('');
