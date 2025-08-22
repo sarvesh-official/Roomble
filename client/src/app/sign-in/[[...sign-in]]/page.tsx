@@ -3,7 +3,6 @@
 import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import { ThemeToggleButton } from "@/components/ui/theme-toggle-button";
 import CircularText from "@/components/CircularText";
 import {
@@ -18,7 +17,6 @@ const Dither = dynamic(() => import("../../../components/Dither"), {
 });
 
 export default function Page() {
-  const router = useRouter();
   
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden p-4">
