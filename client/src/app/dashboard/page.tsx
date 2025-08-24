@@ -27,7 +27,6 @@ import {
 import { generateRoomId } from '@/lib/utils';
 import { ThemeToggleButton } from '@/components/ui/theme-toggle-button';
 import { UserDropdown } from '@/components/user-dropdown';
-import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
 import {
     ArrowRight,
