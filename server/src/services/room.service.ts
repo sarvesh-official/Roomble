@@ -22,7 +22,7 @@ export const createRoomService = async (data: CreateRoom) => {
             isPublic : data.isPublic,
             creatorId : data.creatorId,
             tags: {
-                connect: data.tagIds?.map((id) => ({ id, name: `tag-${id}` })) || [],
+                connect: data.tagIds?.map((id) => ({ id })) || [],
             },
         },
         include : {
