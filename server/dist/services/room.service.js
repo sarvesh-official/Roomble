@@ -29,7 +29,7 @@ const createRoomService = (data) => __awaiter(void 0, void 0, void 0, function* 
             isPublic: data.isPublic,
             creatorId: data.creatorId,
             tags: {
-                connect: ((_a = data.tagIds) === null || _a === void 0 ? void 0 : _a.map((id) => ({ id }))) || [],
+                connect: ((_a = data.tagIds) === null || _a === void 0 ? void 0 : _a.map((id) => ({ id, name: `tag-${id}` }))) || [],
             },
         },
         include: {

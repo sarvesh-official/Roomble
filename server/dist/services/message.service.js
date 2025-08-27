@@ -13,13 +13,19 @@ exports.getMessagesByRoom = exports.addMessage = void 0;
 const client_1 = require("../prisma/client");
 const addMessage = (data) => __awaiter(void 0, void 0, void 0, function* () {
     return client_1.prisma.message.create({
-        data
+        data: {
+            roomId: data.roomId,
+            senderId: data.senderId,
+            senderName: data.senderName,
+            senderProfileUrl: data.senderProfileUrl,
+            content: data.content
+        }
     });
 });
 exports.addMessage = addMessage;
 const getMessagesByRoom = (roomCode) => __awaiter(void 0, void 0, void 0, function* () {
     return client_1.prisma.message.findMany({
-        where: { id: roomCode }, orderBy: { createdAt: "asc" }
+        where: { roomId: roomCode }, orderBy: { createdAt: "asc" }
     });
 });
 exports.getMessagesByRoom = getMessagesByRoom;
