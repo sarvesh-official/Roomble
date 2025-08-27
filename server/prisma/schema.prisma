@@ -21,6 +21,7 @@ model User {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   rooms       Room[]
+  messages    Message[]
   memberships RoomMembers[]
   sentInvites RoomInvite[]
 }
@@ -34,10 +35,10 @@ model Room {
   creator     User          @relation(fields: [creatorId], references: [id])
   tags        Tag[]         @relation("RoomTags")
   members     RoomMembers[]
-  invites RoomInvite[]
+  invites     RoomInvite[]
+  messages    Message[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-
 }
 
 model RoomMembers {
@@ -48,27 +49,38 @@ model RoomMembers {
   room   Room   @relation(fields: [roomId], references: [id])
 
   @@unique([userId, roomId])
+}
 
+model Message {
+  id String @id @default(cuid())
+  roomId String
+  senderId String
+  senderName String
+  senderProfileUrl String?
+  content String
+  createdAt DateTime @default(now())
+
+  room Room @relation(fields: [roomId], references: [id])
+  sender User @relation(fields: [senderId], references: [id])
 }
 
 model Tag {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   name      String   @unique
   rooms     Room[]   @relation("RoomTags")
   createdAt DateTime @default(now())
 }
 
-
 model RoomInvite {
-  id         String       @id @default(cuid())
-  roomId     String
-  invitedBy  String       
-  email      String       // invite sent to this email (registered or not)
-  status     InviteStatus @default(PENDING)
-  createdAt  DateTime     @default(now())
-  expiresAt  DateTime     @default(dbgenerated("now() + interval '24 hours'")) // Expires in 24 hours
-  room       Room         @relation(fields: [roomId], references: [id])
-  inviter    User         @relation(fields: [invitedBy], references: [id])
+  id        String       @id @default(cuid())
+  roomId    String
+  invitedBy String
+  email     String // invite sent to this email (registered or not)
+  status    InviteStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  expiresAt DateTime     @default(dbgenerated("now() + interval '24 hours'")) // Expires in 24 hours
+  room      Room         @relation(fields: [roomId], references: [id])
+  inviter   User         @relation(fields: [invitedBy], references: [id])
 
   @@unique([roomId, email])
 }

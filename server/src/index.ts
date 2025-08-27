@@ -5,13 +5,14 @@ import { Server } from "socket.io";
 import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import webHooksRoutes from "./routes/webhook.routes";
+import roomRoutes from "./routes/room.routes";
 
 configDotenv();
 
 const port = process.env.PORT || 5000;
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
@@ -24,13 +25,16 @@ app.use(
 );
 
 app.use(cors());
-app.use(clerkMiddleware());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is up!");
 });
 
+app.use(clerkMiddleware());
+
 app.use("/api/webhooks", webHooksRoutes);
+
+app.use("/api/rooms", roomRoutes)
 
 io.on("connection", (socket) => {
   console.log("connected ", socket.id);

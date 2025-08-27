@@ -113,7 +113,7 @@ export default function EnhancedOTPInput({
                 maxLength={6}
                 onFocus={() => setHasGuessed(undefined)}
                 render={({ slots }) => (
-                  <div className="flex gap-3 px-2 py-1">
+                  <div className="flex gap-1.5 xs:gap-2 sm:gap-3 px-2 py-1">
                     {slots.map((slot, idx) => (
                       <Slot key={idx} {...slot} />
                     ))}
@@ -142,10 +142,10 @@ function Slot(props: SlotProps) {
   return (
     <div
       className={
-        "bg-background text-foreground flex h-20 w-16 items-center justify-center rounded-md font-medium shadow-md transition-all duration-200 border border-gray-500 dark:border-gray-200"}
+        "bg-background text-foreground flex h-12 w-10 sm:h-16 sm:w-12 md:h-20 md:w-16 items-center justify-center rounded-md font-medium shadow-md transition-all duration-200 border border-gray-500 dark:border-gray-200"}
     >
       {props.char !== null && (
-        <div className="text-4xl font-bold uppercase">{props.char}</div>
+        <div className="text-2xl sm:text-3xl md:text-4xl font-bold uppercase">{props.char}</div>
       )}
     </div>
   )
