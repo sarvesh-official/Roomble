@@ -22,8 +22,8 @@ export const createRoomService = async (data: CreateRoom) => {
             isPublic : data.isPublic,
             creatorId : data.creatorId,
             tags: {
-                connect: data.tagIds?.map((id) => ({ id })) || [],
-            },
+                connect: data.tagIds?.map(tagId => ({ id: tagId })) // or ({ name: tag.name })
+              }
         },
         include : {
             tags :  true,
@@ -52,7 +52,7 @@ export const joinRoomService = async({roomCode, userId}: JoinRoom) => {
         throw new Error("Room not found");
     }
 
-    const isMember = room.members.some((m) => m.userId === userId);
+    const isMember = room.members.some((m: any) => m.userId === userId);
 
     if (!isMember) {
         await prisma.roomMembers.create({
