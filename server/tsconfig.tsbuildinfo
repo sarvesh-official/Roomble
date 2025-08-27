@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.9.2"}
+{"root":["./src/index-backup.ts","./src/index.ts","./src/controllers/webhook.controllers.ts","./src/prisma/client.ts","./src/routes/webhook.routes.ts","./src/services/user.service.ts","./src/utils/clerk.ts"],"version":"5.9.2"}
