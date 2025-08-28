@@ -65,9 +65,9 @@ model Message {
 }
 
 model Tag {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  rooms     Room[]   @relation("RoomTags")
+  id String @id @default(cuid())
+  name String @unique
+  rooms Room[] @relation("RoomTags")
   createdAt DateTime @default(now())
 }
 
