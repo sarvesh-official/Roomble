@@ -12,19 +12,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.joinRoom = exports.createRoom = void 0;
 const express_1 = require("@clerk/express");
 const room_service_1 = require("../services/room.service");
-const index_1 = require("../index");
 const lib_1 = require("../utils/lib");
+const tag_service_1 = require("../services/tag.service");
+const __1 = require("..");
 const createRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, description, isPublic, tagIds } = req.body;
+        const { name, description, isPublic, tagIds, customTags } = req.body;
         const { userId } = (0, express_1.getAuth)(req);
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized: No user ID found." });
         }
         const creatorId = userId;
-        const room = yield (0, room_service_1.createRoomService)({ name, description, isPublic, tagIds, creatorId });
+        let allTagIds = [...(tagIds || [])];
+        if (customTags && Array.isArray(customTags) && customTags.length > 0) {
+            const customTagIds = yield (0, tag_service_1.findOrCreateTagsService)(customTags);
+            allTagIds = [...allTagIds, ...customTagIds];
+        }
+        const room = yield (0, room_service_1.createRoomService)({ name, description, isPublic, tagIds: allTagIds, creatorId });
         if (isPublic) {
-            index_1.socketModule.getIO().emit("new room", {
+            __1.io.emit("new room", {
                 id: room.id.toLocaleUpperCase(),
                 name: room.name,
                 isPublic: room.isPublic
@@ -54,7 +60,7 @@ const joinRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(404).json({ message: "Room not found" });
         }
         const user = yield (0, lib_1.userDetails)(userId);
-        index_1.socketModule.getIO().to(roomCode).emit("user-joined", {
+        __1.io.to(roomCode).emit("user-joined", {
             user
         });
         res.status(200).json(Object.assign(Object.assign({}, room), { id: room.id.toUpperCase(), members: room.members.map((m) => m.user) }));

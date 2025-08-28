@@ -1,30 +1,96 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChatLayout } from '@/components/chat-layout';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { ThemeToggleButton } from '@/components/ui/theme-toggle-button';
-
+import { useUser, SignInButton, UserButton } from '@clerk/nextjs';
+import { Share2, Copy, Users } from 'lucide-react';
+import { toast } from 'sonner';
+import { AppSidebar } from '@/components/app-sidebar';
+import { Messages } from '@/components/messages';
+import { ChatInput } from '@/components/chat-input';
+import { ChatHeader } from '@/components/chat-header';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 export default function RoomPage() {
   const params = useParams();
+  const router = useRouter();
+  const { user, isLoaded: isUserLoaded } = useUser();
   const roomId = params?.id as string;
   
   const [username, setUsername] = useState('');
   const [isJoined, setIsJoined] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  
+  type Participant = {
+    id: string;
+    name: string;
+    isActive: boolean;
+    avatar: string | null;
+  };
+
+
+  const [participants, setParticipants] = useState<Participant[]>([
+    { id: '1', name: 'Alex Smith', isActive: true, avatar: null },
+    { id: '2', name: 'Jamie Doe', isActive: true, avatar: null },
+    { id: '3', name: 'Taylor Wilson', isActive: false, avatar: null },
+  ]);
+  
 
   useEffect(() => {
-    // Check if username exists in localStorage
-    const storedUsername = localStorage.getItem('roomble-username');
-    if (storedUsername) {
-      setUsername(storedUsername);
+    if (user && username) {
+
+      const userExists = participants.some(p => p.name === username);
+      if (!userExists) {
+        setParticipants(prev => [
+          ...prev,
+          { 
+            id: user.id || 'current-user', 
+            name: username, 
+            isActive: true, 
+            avatar: user.imageUrl || null 
+          }
+        ]);
+      }
     }
-    setIsLoading(false);
-  }, []);
+  }, [user, username, participants]);
+
+  useEffect(() => {
+
+    if (isUserLoaded) {
+      if (user) {
+
+        setUsername(user.fullName || user.username || user.firstName || '');
+        setIsJoined(true);
+        setIsLoading(false);
+      } else {
+
+        const storedUsername = localStorage.getItem('roomble-username');
+        if (storedUsername) {
+          setUsername(storedUsername);
+        }
+        setIsLoading(false);
+      }
+    }
+  }, [user, isUserLoaded]);
 
   const handleJoinRoom = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,8 +110,8 @@ export default function RoomPage() {
     );
   }
 
-  // Show username input if not joined
-  if (!isJoined) {
+  // Show username input if not joined and not logged in
+  if (!isJoined && !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="mx-auto w-full max-w-md space-y-6 rounded-lg border bg-card p-6 shadow-lg">
@@ -63,27 +129,51 @@ export default function RoomPage() {
             </div>
           </div>
 
-          <form onSubmit={handleJoinRoom} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="username" className="text-sm font-medium leading-none">
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your name"
-                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                required
-                autoFocus
-              />
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="text-center">
+                <h2 className="text-lg font-medium">Sign in to join</h2>
+                <p className="text-sm text-muted-foreground mt-1">Use your account for the best experience</p>
+              </div>
+              
+              <div className="flex justify-center">
+                <SignInButton>
+                  <Button className="w-full">Sign In</Button>
+                </SignInButton>
+              </div>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Or continue as guest</span>
+                </div>
+              </div>
             </div>
             
-            <Button type="submit" className="w-full">
-              Join Room
-            </Button>
-          </form>
+            <form onSubmit={handleJoinRoom} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="username" className="text-sm font-medium leading-none">
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your name"
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  required
+                  autoFocus
+                />
+              </div>
+              
+              <Button type="submit" className="w-full" variant="outline">
+                Join as Guest
+              </Button>
+            </form>
+          </div>
 
           <div className="flex flex-col items-center gap-4">
             <Link 
@@ -103,7 +193,30 @@ export default function RoomPage() {
 
   return (
     <SidebarProvider>
-      <ChatLayout />
+      <div className="flex h-screen w-full bg-background">
+        <AppSidebar username={username} />
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+          <ChatHeader 
+            participants={participants} 
+            memberCount={participants.filter(p => p.isActive).length} 
+          />
+          <div className="flex-1 min-h-0 overflow-auto relative bg-background">
+            <div className="mx-auto w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
+              <Messages 
+                messages={[]} 
+                isTyping={false} 
+                roomName={roomId}
+                isPrivate={false}
+              />
+            </div>
+          </div>
+          <div className="p-4 sticky bottom-0 z-10">
+            <div className="mx-auto w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
+              <ChatInput onSend={() => {}} isDisabled={false} />
+            </div>
+          </div>
+        </div>
+      </div>
     </SidebarProvider>
   );
 }

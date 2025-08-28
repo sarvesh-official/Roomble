@@ -8,6 +8,7 @@ import webHooksRoutes from "./routes/webhook.routes";
 import roomRoutes from "./routes/room.routes";
 import messageRoutes from "./routes/message.routes";
 import tagRoutes from "./routes/tag.routes";
+import { requireAuth } from "./middleware/authMiddleware";
 
 configDotenv();
 
@@ -36,14 +37,14 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/webhooks", webHooksRoutes);
 
-app.use(clerkMiddleware());
+app.use(clerkMiddleware({publishableKey : process.env.CLERK_PUBLIC_KEY as string, secretKey : process.env.CLERK_SECRET_KEY as string}));
 
+app.use("/api/tags", requireAuth, tagRoutes);
 
-app.use("/api/rooms", roomRoutes)
-app.use("/api/messages", messageRoutes)
-app.use("/api/tags", tagRoutes)
+app.use("/api/rooms", requireAuth, roomRoutes)
+app.use("/api/messages", requireAuth, messageRoutes)
 
-socketIO.on("connection", (socket) => {
+io.on("connection", (socket) => {
   console.log("connected ", socket.id);
   socket.on("disconnect", () => {
     console.log("disconnected", socket.id);

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
+// Define an extended request type to include Clerk authentication data
 interface AuthenticatedRequest extends Request {
   auth?: { userId?: string };
 }
