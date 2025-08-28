@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { Globe, Lock } from 'lucide-react';
+import { Globe, Lock, Tag, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,61 +16,128 @@ import {
   DialogFooter,
   DialogClose
 } from '@/components/ui/dialog';
-import { generateRoomId } from '@/lib/utils';
+import { toast } from 'sonner';
+import { createRoom } from '@/app/api/room';
+import { getTags } from '@/app/api/tag';
+import { Tag as TagType, TagOption } from '@/types/tag';
+import { Badge } from '@/components/ui/badge';
+import { Combobox } from '@/components/ui/combobox';
 
 interface CreateRoomModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateRoom: (roomId: string) => void;
 }
 
-export function CreateRoomModal({ isOpen, onOpenChange, onCreateRoom }: CreateRoomModalProps) {
+export function CreateRoomModal({ isOpen, onOpenChange }: CreateRoomModalProps) {
   const { user } = useUser();
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
   const [roomNameInput, setRoomNameInput] = useState('');
   const [roomNameError, setRoomNameError] = useState('');
   const [roomDescriptionInput, setRoomDescriptionInput] = useState('');
-  const [roomTagsInput, setRoomTagsInput] = useState('');
   const [isRoomPublic, setIsRoomPublic] = useState(true);
-
-  const handleCreateRoom = () => {
-    // Validate room name
-    if (!roomNameInput.trim()) {
-      setRoomNameError('Please enter a room name');
-      return;
-    }
-
-    setIsCreatingRoom(true);
-    const roomId = generateRoomId();
-
-    // Process tags if provided
-    const tags = roomTagsInput.trim()
-      ? roomTagsInput.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-      : [];
-
-    // Get current user name (in a real app, this would come from authentication)
-    const currentUser = user?.fullName || localStorage.getItem('roomble-username') || 'Guest User';
-
-    // In a real app, you would save the room data to your backend
-    // For now, we'll just store in localStorage and navigate to the room
-    setTimeout(() => {
-      // Store room details in localStorage
-      localStorage.setItem('roomble-room-name', roomNameInput.trim());
-      localStorage.setItem('roomble-room-description', roomDescriptionInput.trim());
-      localStorage.setItem('roomble-room-tags', JSON.stringify(tags));
-      localStorage.setItem('roomble-room-public', String(isRoomPublic));
-      localStorage.setItem('roomble-room-creator', currentUser);
+  
+  // Tag management
+  const [availableTags, setAvailableTags] = useState<TagType[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const [customTagInput, setCustomTagInput] = useState('');
+  const [customTags, setCustomTags] = useState<string[]>([]);
+  const [isLoadingTags, setIsLoadingTags] = useState(false);
+  
+  // Store creator name in localStorage
+  const creatorName = user?.fullName || user?.username || 'Anonymous';
+  
+  // Fetch available tags when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const fetchTags = async () => {
+        setIsLoadingTags(true);
+        try {
+          const tags = await getTags();
+          setAvailableTags(tags);
+        } catch (error) {
+          console.error('Failed to fetch tags:', error);
+          toast.error('Failed to load tags');
+        } finally {
+          setIsLoadingTags(false);
+        }
+      };
       
-      // Reset form
+      fetchTags();
+      
+      // Reset form when modal opens
       setRoomNameInput('');
+      setRoomNameError('');
       setRoomDescriptionInput('');
-      setRoomTagsInput('');
+      setSelectedTagIds([]);
+      setCustomTags([]);
+      setCustomTagInput('');
       setIsRoomPublic(true);
-      setIsCreatingRoom(false);
+    }
+  }, [isOpen]);
+
+  // Handle adding a custom tag
+  const handleAddCustomTag = () => {
+    if (!customTagInput.trim()) return;
+    
+    // Check if tag already exists in custom tags
+    if (!customTags.includes(customTagInput.trim())) {
+      setCustomTags([...customTags, customTagInput.trim()]);
+    }
+    
+    setCustomTagInput('');
+  };
+  
+  // Handle removing a custom tag
+  const handleRemoveCustomTag = (tagToRemove: string) => {
+    setCustomTags(customTags.filter(tag => tag !== tagToRemove));
+  };
+  
+  // Handle removing a selected tag
+  const handleRemoveSelectedTag = (tagIdToRemove: string) => {
+    setSelectedTagIds(selectedTagIds.filter(id => id !== tagIdToRemove));
+  };
+  
+  // Handle tag selection
+  const handleTagSelect = (tagId: string) => {
+    if (selectedTagIds.includes(tagId)) {
+      handleRemoveSelectedTag(tagId);
+    } else {
+      setSelectedTagIds([...selectedTagIds, tagId]);
+    }
+  };
+
+  const handleCreateRoom = async () => {
+    try {
+      if (!roomNameInput.trim()) {
+        setRoomNameError('Please enter a room name');
+        return;
+      }
       
-      onCreateRoom(roomId);
+      setIsCreatingRoom(true);
+      
+      // Save creator name to localStorage
+      if (user) {
+        localStorage.setItem('roomCreator', creatorName);
+      }
+      
+      // Create room with selected tags and custom tags
+      const response = await createRoom({
+        name: roomNameInput.trim(),
+        description: roomDescriptionInput.trim(),
+        isPublic: isRoomPublic,
+        tagIds: selectedTagIds,
+        customTags: customTags,
+        createdBy: creatorName
+      });
+      
+      toast.success('Room created successfully');
       onOpenChange(false);
-    }, 1000);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to create room');
+    } finally {
+      setIsCreatingRoom(false);
+    }
   };
 
   return (
@@ -113,16 +180,78 @@ export function CreateRoomModal({ isOpen, onOpenChange, onCreateRoom }: CreateRo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="room-tags">Tags (optional)</Label>
-            <Input
-              id="room-tags"
-              placeholder="Comma-separated tags (e.g., Design, Weekly, Team)"
-              value={roomTagsInput}
-              onChange={(e) => setRoomTagsInput(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">Separate tags with commas</p>
+            <Label>Category Tags</Label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {selectedTagIds.map(tagId => {
+                const tag = availableTags.find(t => t.id === tagId);
+                if (!tag) return null;
+                return (
+                  <Badge 
+                    key={tag.id} 
+                    variant={tag.isCategory ? "category" : "default"}
+                    className="flex items-center gap-1 py-1"
+                  >
+                    {tag.name}
+                    <X 
+                      size={14} 
+                      className="cursor-pointer" 
+                      onClick={() => handleRemoveSelectedTag(tag.id)} 
+                    />
+                  </Badge>
+                );
+              })}
+            </div>
+            
+            <div className="mb-4">
+              <Combobox
+                options={availableTags.map(tag => ({
+                  value: tag.id,
+                  label: tag.name,
+                  isCategory: tag.isCategory
+                }))}
+                onChange={handleTagSelect}
+                placeholder={isLoadingTags ? "Loading tags..." : "Select tags..."}
+                disabled={isLoadingTags}
+              />
+            </div>
+            
+            <Label>Custom Tags</Label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {customTags.map(tag => (
+                <Badge 
+                  key={tag} 
+                  variant="custom"
+                  className="flex items-center gap-1 py-1"
+                >
+                  {tag}
+                  <X 
+                    size={14} 
+                    className="cursor-pointer" 
+                    onClick={() => handleRemoveCustomTag(tag)} 
+                  />
+                </Badge>
+              ))}
+            </div>
+            
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add custom tag"
+                value={customTagInput}
+                onChange={(e) => setCustomTagInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomTag()}
+              />
+              <Button 
+                type="button" 
+                size="sm" 
+                onClick={handleAddCustomTag}
+                disabled={!customTagInput.trim()}
+              >
+                Add
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">Create your own custom tags</p>
           </div>
-          
+
           <div className="flex items-center justify-between space-x-2">
             <Label htmlFor="room-public" className="flex items-center gap-2">
               <div className="flex-shrink-0">
@@ -135,8 +264,8 @@ export function CreateRoomModal({ isOpen, onOpenChange, onCreateRoom }: CreateRo
               <div>
                 <span>{isRoomPublic ? 'Public Room' : 'Private Room'}</span>
                 <p className="text-xs text-muted-foreground">
-                  {isRoomPublic 
-                    ? 'Anyone can find and join this room' 
+                  {isRoomPublic
+                    ? 'Anyone can find and join this room'
                     : 'Only people with the room code can join'}
                 </p>
               </div>

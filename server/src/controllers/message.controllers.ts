@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { addMessage, getMessagesByRoom } from "../services/message.service";
-import { socketModule } from "../index";
+import { io } from "../index";
 
 export const sendMessage = async (req: Request, res: Response) => {
 
@@ -12,7 +12,7 @@ export const sendMessage = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-            socketModule.getIO().to(roomId).emit("new-message", { content, senderName, senderProfileUrl });
+            io.to(roomId).emit("new-message", { content, senderName, senderProfileUrl });
 
         const message = await addMessage({
             roomId,

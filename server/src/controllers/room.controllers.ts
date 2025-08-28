@@ -1,14 +1,15 @@
 import { getAuth } from "@clerk/express";
 import { Request, Response } from "express";
 import { createRoomService, joinRoomService } from "../services/room.service";
-import { socketModule } from "../index";
 import { userDetails } from "../utils/lib";
+import { findOrCreateTagsService } from "../services/tag.service";
+import { io } from "..";
 
 export const createRoom = async (req: Request, res: Response) => {
 
     try {
 
-        const { name, description, isPublic, tagIds } = req.body;
+        const { name, description, isPublic, tagIds, customTags } = req.body;
 
         const { userId } = getAuth(req);
 
@@ -17,11 +18,19 @@ export const createRoom = async (req: Request, res: Response) => {
         }
 
         const creatorId: string = userId;
+        
+        // Process custom tags if provided
+        let allTagIds = [...(tagIds || [])];
+        
+        if (customTags && Array.isArray(customTags) && customTags.length > 0) {
+            const customTagIds = await findOrCreateTagsService(customTags);
+            allTagIds = [...allTagIds, ...customTagIds];
+        }
 
-        const room = await createRoomService({ name, description, isPublic, tagIds, creatorId })
+        const room = await createRoomService({ name, description, isPublic, tagIds: allTagIds, creatorId })
 
         if (isPublic) {
-            socketModule.getIO().emit("new room", {
+            io.emit("new room", {
                 id: room.id.toLocaleUpperCase(),
                 name: room.name,
                 isPublic: room.isPublic
@@ -49,7 +58,6 @@ export const joinRoom = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Invalid room code" });
         }
 
-
         const { userId } = getAuth(req);
 
         if (!userId) {
@@ -64,7 +72,7 @@ export const joinRoom = async (req: Request, res: Response) => {
 
         const user = await userDetails(userId);
 
-        socketModule.getIO().to(roomCode).emit("user-joined", {
+        io.to(roomCode).emit("user-joined", {
             user
         })
 
