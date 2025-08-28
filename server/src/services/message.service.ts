@@ -2,7 +2,7 @@ import { prisma } from "../prisma/client";
 import { CreateMessageInput } from "../types/message.types";
 
 export const addMessage = async (data: CreateMessageInput) => {
-    return prisma.Message.create({
+    return prisma.message.create({
         data: {
             roomId: data.roomId,
             senderId: data.senderId,
