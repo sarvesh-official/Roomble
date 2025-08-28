@@ -37,9 +37,10 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Server is up!");
 });
 
+app.use("/api/webhooks", webHooksRoutes);
+
 app.use(clerkMiddleware());
 
-app.use("/api/webhooks", webHooksRoutes);
 
 app.use("/api/rooms", roomRoutes)
 app.use("/api/messages", messageRoutes)
