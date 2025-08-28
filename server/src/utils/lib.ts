@@ -10,8 +10,7 @@ export const generateRoomId = async () => {
 
 
 export const userDetails = async (userId: string) => {
-
-  await prisma.user.findUnique({
+  return await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, name: true, profileUrl: true },
   });

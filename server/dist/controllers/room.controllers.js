@@ -24,7 +24,7 @@ const createRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const creatorId = userId;
         const room = yield (0, room_service_1.createRoomService)({ name, description, isPublic, tagIds, creatorId });
         if (isPublic) {
-            index_1.io.emit("new room", {
+            index_1.socketModule.getIO().emit("new room", {
                 id: room.id.toLocaleUpperCase(),
                 name: room.name,
                 isPublic: room.isPublic
@@ -54,7 +54,7 @@ const joinRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(404).json({ message: "Room not found" });
         }
         const user = yield (0, lib_1.userDetails)(userId);
-        index_1.io.to(roomCode).emit("user-joined", {
+        index_1.socketModule.getIO().to(roomCode).emit("user-joined", {
             user
         });
         res.status(200).json(Object.assign(Object.assign({}, room), { id: room.id.toUpperCase(), members: room.members.map((m) => m.user) }));

@@ -1,7 +1,7 @@
 import { getAuth } from "@clerk/express";
 import { Request, Response } from "express";
 import { createRoomService, joinRoomService } from "../services/room.service";
-import { io } from "../index";
+import { socketModule } from "../index";
 import { userDetails } from "../utils/lib";
 
 export const createRoom = async (req: Request, res: Response) => {
@@ -21,7 +21,7 @@ export const createRoom = async (req: Request, res: Response) => {
         const room = await createRoomService({ name, description, isPublic, tagIds, creatorId })
 
         if (isPublic) {
-            io.emit("new room", {
+            socketModule.getIO().emit("new room", {
                 id: room.id.toLocaleUpperCase(),
                 name: room.name,
                 isPublic: room.isPublic
@@ -64,14 +64,14 @@ export const joinRoom = async (req: Request, res: Response) => {
 
         const user = await userDetails(userId);
 
-        io.to(roomCode).emit("user-joined", {
+        socketModule.getIO().to(roomCode).emit("user-joined", {
             user
         })
 
         res.status(200).json({
             ...room,
             id: room.id.toUpperCase(),
-            members: room.members.map((m) => m.user),
+            members: room.members.map((m: { user: any }) => m.user),
         });
     } catch (err) {
         console.log(err)

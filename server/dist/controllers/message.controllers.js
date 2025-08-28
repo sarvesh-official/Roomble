@@ -18,7 +18,7 @@ const sendMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (!roomId || !content || !senderId || !senderName) {
             return res.status(400).json({ message: "Missing required fields" });
         }
-        index_1.io.to(roomId).emit("new-message", { content, senderName, senderProfileUrl });
+        index_1.socketModule.getIO().to(roomId).emit("new-message", { content, senderName, senderProfileUrl });
         const message = yield (0, message_service_1.addMessage)({
             roomId,
             senderId,

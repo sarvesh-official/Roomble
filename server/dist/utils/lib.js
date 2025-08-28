@@ -52,7 +52,7 @@ const generateRoomId = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.generateRoomId = generateRoomId;
 const userDetails = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    yield client_1.prisma.user.findUnique({
+    return yield client_1.prisma.user.findUnique({
         where: { id: userId },
         select: { id: true, name: true, profileUrl: true },
     });
