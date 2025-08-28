@@ -29,7 +29,7 @@ export default function EnhancedOTPInput({
   triggerButton,
   title = "Enter confirmation code",
   description = "Enter the 6-digit code to join the room",
-  correctCode = "123456",
+  correctCode,
   onSuccess,
   isOpen,
   onOpenChange
@@ -58,7 +58,10 @@ export default function EnhancedOTPInput({
     inputRef.current?.select()
     await new Promise((r) => setTimeout(r, 1_00))
 
-    setHasGuessed(value === correctCode)
+    // If correctCode is provided, validate against it
+    // Otherwise, assume the code is valid (validation will happen elsewhere)
+    const isValid = correctCode ? (value === correctCode) : true;
+    setHasGuessed(isValid)
 
     setValue("")
     setTimeout(() => {

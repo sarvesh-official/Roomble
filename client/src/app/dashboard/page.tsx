@@ -7,13 +7,14 @@ import { motion } from 'framer-motion';
 import { Search, Plus, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useRoomApi } from '@/app/api/room';
+import { toast } from 'sonner';
 
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { RoomFilters } from '@/components/dashboard/RoomFilters';
 import { RoomGrid } from '@/components/dashboard/RoomGrid';
 import { JoinRoomModal } from '@/components/dashboard/JoinRoomModal';
 import { CreateRoomModal } from '@/components/dashboard/CreateRoomModal';
-import { RoomConfirmationDialog } from '@/components/dashboard/RoomConfirmationDialog';
 import { Room } from '@/types/room';
 
 
@@ -81,19 +82,19 @@ const mockRooms: Room[] = [
 export default function DashboardPage() {
     const router = useRouter();
     const { user } = useUser();
+    const { joinRoom } = useRoomApi();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeFilter, setActiveFilter] = useState('all');
     const [joinRoomModalOpen, setJoinRoomModalOpen] = useState(false);
     const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
-    const [showRoomConfirmation, setShowRoomConfirmation] = useState(false);
-    const [roomToJoin, setRoomToJoin] = useState<Room | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('all');
     const [visibilityTab, setVisibilityTab] = useState('public');
     const [mounted, setMounted] = useState(false);
     const [rooms] = useState<Room[]>(mockRooms);
     const [isSearching, setIsSearching] = useState(false);
-    const [isJoiningRoom, setIsJoiningRoom] = useState(false);
     const [isCreatingRoom, setIsCreatingRoom] = useState(false);
+    const [isJoiningRoom, setIsJoiningRoom] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -234,8 +235,19 @@ export default function DashboardPage() {
                             rooms={filteredRooms}
                             searchQuery={debouncedSearchQuery}
                             onJoinRoom={(room) => {
-                                setRoomToJoin(room);
-                                setShowRoomConfirmation(true);
+
+                                setIsJoiningRoom(true);
+                                joinRoom({ roomCode: room.id })
+                                    .then(() => {
+                                        router.push(`/room/${room.id}`);
+                                    })
+                                    .catch((error) => {
+                                        console.error('Failed to join room:', error);
+                                        toast.error('Failed to join room. Please try again.');
+                                    })
+                                    .finally(() => {
+                                        setIsJoiningRoom(false);
+                                    });
                             }}
                             onCreateRoom={() => setCreateRoomModalOpen(true)}
                         />
@@ -246,14 +258,18 @@ export default function DashboardPage() {
             {/* Join Room Modal */}
             <JoinRoomModal
                 isOpen={joinRoomModalOpen}
-                onOpenChange={setJoinRoomModalOpen}
+                onOpenChange={(open) => {
+                    // Only allow closing if not in joining state
+                    if (!isJoiningRoom) {
+                        setJoinRoomModalOpen(open);
+                    }
+                }}
                 onSuccess={(roomId) => {
                     setIsJoiningRoom(true);
-                    // Simulate API call delay
-                    setTimeout(() => {
-                        router.push(`/room/${roomId}`);
-                        setIsJoiningRoom(false);
-                    }, 800);
+                    // Keep modal open and in loading state
+                    // Navigate directly to room
+                    router.push(`/room/${roomId}`);
+                    // Modal will be automatically unmounted during navigation
                 }}
             />
             {/* Create Room Modal */}
@@ -262,20 +278,7 @@ export default function DashboardPage() {
                 onOpenChange={setCreateRoomModalOpen}
             />
 
-            {/* Room Join Confirmation Dialog */}
-            <RoomConfirmationDialog
-                isOpen={showRoomConfirmation}
-                onOpenChange={setShowRoomConfirmation}
-                room={roomToJoin}
-                onJoinRoom={(roomId) => {
-                    setIsJoiningRoom(true);
-                    // Simulate API call delay
-                    setTimeout(() => {
-                        router.push(`/room/${roomId}`);
-                        setIsJoiningRoom(false);
-                    }, 800);
-                }}
-            />
+            {/* Join Room Modal is now used instead of RoomConfirmationDialog */}
         </div>
     );
 }
