@@ -40,7 +40,6 @@ export function CreateRoomModal({ isOpen, onOpenChange }: CreateRoomModalProps) 
   const [roomDescriptionInput, setRoomDescriptionInput] = useState('');
   const [isRoomPublic, setIsRoomPublic] = useState(true);
   
-  // Tag management
   const [availableTags, setAvailableTags] = useState<TagType[]>([]);
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [customTagInput, setCustomTagInput] = useState('');
@@ -74,7 +73,7 @@ export function CreateRoomModal({ isOpen, onOpenChange }: CreateRoomModalProps) 
       setCustomTagInput('');
       setIsRoomPublic(true);
     }
-  }, [isOpen]);
+  }, [isOpen, getTags]);
 
   const handleAddCustomTag = () => {
     if (!customTagInput.trim()) return;
