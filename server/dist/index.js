@@ -32,8 +32,8 @@ app.use((0, cors_1.default)());
 app.get("/", (req, res) => {
     res.send("Server is up!");
 });
-app.use((0, express_2.clerkMiddleware)());
 app.use("/api/webhooks", webhook_routes_1.default);
+app.use((0, express_2.clerkMiddleware)());
 app.use("/api/rooms", room_routes_1.default);
 app.use("/api/messages", message_routes_1.default);
 socketIO.on("connection", (socket) => {
