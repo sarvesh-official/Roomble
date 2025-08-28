@@ -19,7 +19,6 @@ export const createRoom = async (req: Request, res: Response) => {
 
         const creatorId: string = userId;
         
-        // Process custom tags if provided
         let allTagIds = [...(tagIds || [])];
         
         if (customTags && Array.isArray(customTags) && customTags.length > 0) {

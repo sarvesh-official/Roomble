@@ -7,4 +7,4 @@ const router = Router();
 router.post("/create-room", createRoom);
 router.post("/join-room", joinRoom);
 
-export default Router;
+export default router;

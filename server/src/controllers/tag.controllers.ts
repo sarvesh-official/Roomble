@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import { getAllTagsService, createTagService, getTagByIdService } from "../services/tag.service";
 
-/**
- * Get all tags
- * Optional query param: categoryOnly=true to get only category tags
- */
+
 export const getAllTags = async (req: Request, res: Response) => {
   try {
     const categoryOnly = req.query.categoryOnly === 'true';
@@ -16,9 +13,6 @@ export const getAllTags = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Get a tag by ID
- */
 export const getTagById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -35,9 +29,7 @@ export const getTagById = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Create a new tag
- */
+
 export const createTag = async (req: Request, res: Response) => {
   try {
     const { name, isCategory } = req.body;

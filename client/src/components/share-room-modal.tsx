@@ -36,23 +36,30 @@ export function ShareRoomModal({ isOpen, onClose, roomId }: ShareRoomModalProps)
             Share this room code with others to invite them to join.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center space-x-2 mt-4">
-          <div className="grid flex-1 gap-2">
-            <div className="bg-zinc-100 dark:bg-zinc-800 p-2 rounded-md flex items-center justify-between">
-              <code className="text-sm font-mono">{roomId}</code>
-            </div>
+        <div className="flex flex-col items-center gap-4 py-4">
+          {/* Large Room Code Display */}
+          <div className="flex gap-1.5 sm:gap-3 px-2 py-1">
+            {roomId.split('').map((char, idx) => (
+              <div 
+                key={idx}
+                className="bg-background text-foreground flex h-12 w-10 sm:h-16 sm:w-12 items-center justify-center rounded-md font-medium shadow-md transition-all duration-200 border border-gray-500 dark:border-gray-200"
+              >
+                <div className="text-2xl sm:text-3xl font-bold uppercase">{char}</div>
+              </div>
+            ))}
           </div>
+          
           <Button 
-            size="icon" 
             variant="outline" 
+            className="gap-2"
             onClick={copyToClipboard}
-            className="flex items-center justify-center"
           >
             {copied ? (
               <Check className="h-4 w-4" />
             ) : (
               <Copy className="h-4 w-4" />
             )}
+            {copied ? 'Copied!' : 'Copy Code'}
           </Button>
         </div>
       </DialogContent>

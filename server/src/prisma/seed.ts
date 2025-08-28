@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -15,7 +16,7 @@ async function main() {
   ];
 
   console.log('Seeding predefined tags...');
-  
+
   // Create tags if they don't exist
   for (const tag of predefinedTags) {
     const existingTag = await prisma.tag.findUnique({

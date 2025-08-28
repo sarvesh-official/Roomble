@@ -16,10 +16,10 @@ const handleClerkWebhook = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const event = yield (0, clerk_1.verifyClerkWebhook)(req);
         if (event.type === "user.created") {
-            yield (0, user_service_1.createUser)(event.data);
+            yield (0, user_service_1.createuser)(event.data);
         }
         if (event.type === "user.deleted") {
-            yield (0, user_service_1.deleteUser)(event.data);
+            yield (0, user_service_1.deleteuser)(event.data);
         }
         return res.status(200).send("Webhook received");
     }

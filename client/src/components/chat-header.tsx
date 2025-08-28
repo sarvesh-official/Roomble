@@ -4,6 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'react-use';
 import Image from 'next/image';
+import { useState } from 'react';
 
 import { RoomSettings } from '@/components/room-settings';
 import { ShareButton } from '@/components/share-button';
@@ -14,12 +15,34 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { VisibilitySelector } from './visibility-selector';
 import { Users } from 'lucide-react';
 import { ThemeToggleButton } from './ui/theme-toggle-button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ChatHeaderProps {
   memberCount?: number;
+  participants?: Array<{
+    id: string;
+    name: string;
+    isActive: boolean;
+    avatar: string | null;
+  }>;
 }
 
-export function ChatHeader({ memberCount = 24 }: ChatHeaderProps) {
+export function ChatHeader({ memberCount = 24, participants }: ChatHeaderProps) {
+  // Default participants if none provided
+  const defaultParticipants = [
+    { id: '1', name: 'Alex Smith', isActive: true, avatar: null },
+    { id: '2', name: 'Jamie Doe', isActive: true, avatar: null },
+    { id: '3', name: 'Taylor Wilson', isActive: false, avatar: null },
+  ];
+  
+  const roomParticipants = participants || defaultParticipants;
   const router = useRouter();
   const { open } = useSidebar();
   const { width: windowWidth } = useWindowSize();
@@ -59,10 +82,49 @@ export function ChatHeader({ memberCount = 24 }: ChatHeaderProps) {
       </div>
       
       <div className="flex items-center gap-1 sm:gap-2">
-        <div className="flex items-center gap-1 text-sm text-zinc-400">
-          <Users className={isMobile ? "h-4 w-4" : "h-5 w-5"} />
-          <span>{memberCount}</span>
-        </div>
+        {/* Participants Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="gap-1 relative">
+              <Users className={isMobile ? "h-4 w-4" : "h-5 w-5"} />
+              <span>{roomParticipants.filter(p => p.isActive).length}</span>
+              <span className="sr-only">View participants</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>Room Participants</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {roomParticipants.length > 0 ? (
+              roomParticipants.map(participant => (
+                <DropdownMenuItem key={participant.id} className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                      {participant.avatar ? (
+                        <Image 
+                          src={participant.avatar} 
+                          alt={participant.name} 
+                          width={32} 
+                          height={32} 
+                          className="rounded-full" 
+                        />
+                      ) : (
+                        <span className="text-xs font-medium">
+                          {participant.name.charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    <span>{participant.name}</span>
+                  </div>
+                  <span className={`h-2 w-2 rounded-full ${participant.isActive ? 'bg-green-500' : 'bg-gray-300'}`} />
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+                No participants yet
+              </div>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
         
         <ThemeToggleButton
           randomize={true}
