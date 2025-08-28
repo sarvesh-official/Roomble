@@ -7,29 +7,12 @@ import Image from 'next/image';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { ThemeToggleButton } from '@/components/ui/theme-toggle-button';
-import { useUser, SignInButton, UserButton } from '@clerk/nextjs';
-import { Share2, Copy, Users } from 'lucide-react';
-import { toast } from 'sonner';
+import { useUser, SignInButton } from '@clerk/nextjs';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Messages } from '@/components/messages';
 import { ChatInput } from '@/components/chat-input';
 import { ChatHeader } from '@/components/chat-header';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+
 export default function RoomPage() {
   const params = useParams();
   const router = useRouter();

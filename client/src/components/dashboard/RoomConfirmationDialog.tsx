@@ -1,6 +1,7 @@
 'use client';
 
-import { Calendar, Globe, Lock, MessageSquare, Tag, Users } from 'lucide-react';
+import { AlertCircle, Calendar, Globe, Lock, MessageSquare, Tag, Users } from 'lucide-react';
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +26,22 @@ export function RoomConfirmationDialog({
   room, 
   onJoinRoom 
 }: RoomConfirmationDialogProps) {
+  const [error, setError] = useState('');
   if (!room) return null;
+  
+  const validateAndJoinRoom = () => {
+    setError('');
+    
+    const roomCode = room.id.trim().toUpperCase();
+    
+    // Only validate length, allow any alphanumeric characters
+    if (roomCode.length !== 6) {
+      setError('Room code must be exactly 6 characters');
+      return;
+    }
+    
+    onJoinRoom(roomCode);
+  };
   
   return (
     <AlertDialog 
@@ -112,15 +128,23 @@ export function RoomConfirmationDialog({
           </div>
         </div>
         
+        {error && (
+          <div className="flex items-center gap-2 p-3 mb-3 bg-destructive/10 text-destructive rounded-md">
+            <AlertCircle size={16} />
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
+        
         <AlertDialogFooter className="pt-2 border-t">
-          <AlertDialogCancel className="bg-muted hover:bg-muted/80">Cancel</AlertDialogCancel>
+          <AlertDialogCancel 
+            className="bg-muted hover:bg-muted/80"
+            onClick={() => setError('')}
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction 
             className="bg-primary hover:bg-primary/90"
-            onClick={() => {
-              if (room) {
-                onJoinRoom(room.id);
-              }
-            }}
+            onClick={validateAndJoinRoom}
           >
             Join Room
           </AlertDialogAction>
