@@ -7,9 +7,7 @@ import { motion } from 'framer-motion';
 import { Search, Plus, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { generateRoomId } from '@/lib/utils';
 
-// Import modular components
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { RoomFilters } from '@/components/dashboard/RoomFilters';
 import { RoomGrid } from '@/components/dashboard/RoomGrid';
@@ -18,7 +16,6 @@ import { CreateRoomModal } from '@/components/dashboard/CreateRoomModal';
 import { RoomConfirmationDialog } from '@/components/dashboard/RoomConfirmationDialog';
 import { Room } from '@/types/room';
 
-// Room interface is now imported from @/types/room
 
 const mockRooms: Room[] = [
     {
@@ -102,7 +99,7 @@ export default function DashboardPage() {
         setMounted(true);
     }, []);
     
-    // Debounce search query to improve performance
+
     useEffect(() => {
         setIsSearching(true);
         const timer = setTimeout(() => {
@@ -118,31 +115,29 @@ export default function DashboardPage() {
     }
 
     const filteredRooms = rooms.filter(room => {
-        // Search filter
+
         const matchesSearch = debouncedSearchQuery === '' || 
             room.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) || 
             (room.description && room.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase())) ||
             (room.tags && room.tags.some(tag => tag.toLowerCase().includes(debouncedSearchQuery.toLowerCase())));
         
-        // Visibility filter
-        const matchesVisibility = 
+
+            const matchesVisibility = 
             visibilityTab === 'public' ? room.isPublic !== false : 
             visibilityTab === 'private' ? room.isPublic === false : 
             true;
         
-        // Category filter
         const matchesCategory = 
             activeTab === 'all' ? true : 
             activeTab === 'featured' ? room.featured : 
             activeTab === 'popular' ? room.popular :
-            activeTab === 'recent' ? true : // In a real app, you'd filter by recently joined rooms
+            activeTab === 'recent' ? true :
             activeTab === 'created-by-you' ? room.createdByYou :
             true;
 
         return matchesSearch && matchesVisibility && matchesCategory;
     });
 
-    // Animation variants for staggered animations
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -265,14 +260,6 @@ export default function DashboardPage() {
             <CreateRoomModal
                 isOpen={createRoomModalOpen}
                 onOpenChange={setCreateRoomModalOpen}
-                onCreateRoom={(roomId) => {
-                    setIsCreatingRoom(true);
-                    // Simulate API call delay
-                    setTimeout(() => {
-                        router.push(`/room/${roomId}`);
-                        setIsCreatingRoom(false);
-                    }, 800);
-                }}
             />
 
             {/* Room Join Confirmation Dialog */}

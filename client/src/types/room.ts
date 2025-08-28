@@ -11,3 +11,17 @@ export interface Room {
   createdBy?: string;
   createdByYou?: boolean;
 }
+
+
+export interface CreateRoom{
+    name: string;
+    description?: string;
+    isPublic: boolean;
+    tagIds?: string[];
+    customTags?: string[];
+    createdBy?: string;
+}
+
+export interface JoinRoom{
+    roomCode: string;
+}
