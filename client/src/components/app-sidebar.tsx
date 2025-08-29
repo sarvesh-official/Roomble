@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Hash, Lock, Users } from 'lucide-react';
+import { Hash, Lock, MessageSquarePlus, Users } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -60,7 +60,7 @@ export function AppSidebar({ username }: AppSidebarProps) {
                   }}
                 >
                   <div className="size-5 overflow-hidden">
-                    <Image src="/icon.png" alt="New Room" width={20} height={20} className="w-full h-full object-contain" />
+                    <MessageSquarePlus/>
                   </div>
                 </Button>
               </TooltipTrigger>
@@ -73,7 +73,7 @@ export function AppSidebar({ username }: AppSidebarProps) {
         <SidebarHistory />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarUserNav username={username} />
+        <SidebarUserNav />
       </SidebarFooter>
     </Sidebar>
   );

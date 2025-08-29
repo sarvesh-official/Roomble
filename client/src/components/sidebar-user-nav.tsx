@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronUp } from 'lucide-react';
 import { useTheme } from 'next-themes';
-
+import { SignOutButton, useUser } from '@clerk/nextjs';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,30 +18,24 @@ import {
 } from '@/components/ui/sidebar';
 import Image from 'next/image';
 
-interface SidebarUserNavProps {
-  username?: string;
-}
-
-export function SidebarUserNav({ username }: SidebarUserNavProps) {
+export function SidebarUserNav() {
   const { setTheme, resolvedTheme } = useTheme();
+  const { user } = useUser();
   const [displayName, setDisplayName] = useState<string>('Guest');
   const [avatarId, setAvatarId] = useState<string>('Roomble');
   const [mounted, setMounted] = useState(false);
-  
-  // Handle client-side hydration
+
   useEffect(() => {
     setMounted(true);
   }, []);
-  
-  // Update avatar ID when username changes
-  useEffect(() => {
-    if (username) {
-      setDisplayName(username);
-      setAvatarId(username);
-    }
-  }, [username]);
 
-  // Return a simplified version during server-side rendering
+  useEffect(() => {
+    if (user) {
+      setDisplayName(user.fullName || user.username || user.firstName || '');
+      setAvatarId(user.fullName || user.username || user.firstName || '');
+    }
+  }, [user]);
+
   if (!mounted) {
     return (
       <SidebarMenu>
@@ -74,7 +68,7 @@ export function SidebarUserNav({ username }: SidebarUserNavProps) {
             >
               <div className="size-8 flex items-center rounded-full justify-center bg-sidebar-accent text-sidebar-foreground">
                 <Image
-                  src={`https://avatar.vercel.sh/${avatarId}`}
+                  src={user?.imageUrl || `https://avatar.vercel.sh/${avatarId}`}
                   alt={displayName}
                   width={24}
                   height={24}
@@ -92,25 +86,10 @@ export function SidebarUserNav({ username }: SidebarUserNavProps) {
             side="top"
             className="w-[--radix-popper-anchor-width]"
           >
-            <DropdownMenuItem
-              data-testid="user-nav-item-theme"
-              className="cursor-pointer"
-              onSelect={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            >
-              {`Toggle ${resolvedTheme === 'light' ? 'dark' : 'light'} mode`}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem asChild data-testid="user-nav-item-auth">
-              <button
-                type="button"
-                className="w-full cursor-pointer"
-                onClick={() => {
-                  // No authentication functionality needed for now
-                  console.log('Authentication button clicked');
-                }}
-              >
-                Login to your account
-              </button>
+              <div className="w-full cursor-pointer bg-red-600 hover:bg-red-700">
+                <SignOutButton />
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -4,7 +4,6 @@
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'react-use';
 import Image from 'next/image';
-import { useState } from 'react';
 
 import { RoomSettings } from '@/components/room-settings';
 import { ShareButton } from '@/components/share-button';
@@ -13,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from './ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { VisibilitySelector } from './visibility-selector';
-import { Users } from 'lucide-react';
+import { MessageSquarePlus, Users } from 'lucide-react';
 import { ThemeToggleButton } from './ui/theme-toggle-button';
 import {
   DropdownMenu,
@@ -35,13 +34,13 @@ interface ChatHeaderProps {
 }
 
 export function ChatHeader({ memberCount = 24, participants }: ChatHeaderProps) {
-  // Default participants if none provided
+
   const defaultParticipants = [
     { id: '1', name: 'Alex Smith', isActive: true, avatar: null },
     { id: '2', name: 'Jamie Doe', isActive: true, avatar: null },
     { id: '3', name: 'Taylor Wilson', isActive: false, avatar: null },
   ];
-  
+
   const roomParticipants = participants || defaultParticipants;
   const router = useRouter();
   const { open } = useSidebar();
@@ -55,24 +54,23 @@ export function ChatHeader({ memberCount = 24, participants }: ChatHeaderProps) 
 
         {(!open || windowWidth < 768) && (
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size={isMobile ? "sm" : "default"}
-                className="md:px-2 px-1 md:h-fit"
-                onClick={() => {
-                  router.push('/');
-                  router.refresh();
-                }}
-              >
-                <div className={isMobile ? "size-4" : "size-5"}>  
-                  <Image src="/icon.png" alt="New Room" width={20} height={20} className="w-full h-full object-contain" />
-                </div>
-                <span className="sr-only">New Room</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Create New Room</TooltipContent>
-          </Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              type="button"
+              className="p-2 h-fit text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent"
+              onClick={() => {
+                router.push('/');
+                router.refresh();
+              }}
+            >
+              <div className="size-5 overflow-hidden">
+                <MessageSquarePlus/>
+              </div>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent align="end">New Room</TooltipContent>
+        </Tooltip>
         )}
 
         <div className={isMobile ? "flex gap-1" : "flex gap-2"}>
@@ -80,7 +78,7 @@ export function ChatHeader({ memberCount = 24, participants }: ChatHeaderProps) 
           <VisibilitySelector />
         </div>
       </div>
-      
+
       <div className="flex items-center gap-1 sm:gap-2">
         {/* Participants Dropdown */}
         <DropdownMenu>
@@ -100,12 +98,12 @@ export function ChatHeader({ memberCount = 24, participants }: ChatHeaderProps) 
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                       {participant.avatar ? (
-                        <Image 
-                          src={participant.avatar} 
-                          alt={participant.name} 
-                          width={32} 
-                          height={32} 
-                          className="rounded-full" 
+                        <Image
+                          src={participant.avatar}
+                          alt={participant.name}
+                          width={32}
+                          height={32}
+                          className="rounded-full"
                         />
                       ) : (
                         <span className="text-xs font-medium">
@@ -125,7 +123,7 @@ export function ChatHeader({ memberCount = 24, participants }: ChatHeaderProps) 
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-        
+
         <ThemeToggleButton
           randomize={true}
         />
