@@ -78,13 +78,11 @@ export default function RoomPage() {
   const handleJoinRoom = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim()) {
-      // Save username to localStorage
       localStorage.setItem('roomble-username', username.trim());
       setIsJoined(true);
     }
   };
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
@@ -93,7 +91,6 @@ export default function RoomPage() {
     );
   }
 
-  // Show username input if not joined and not logged in
   if (!isJoined && !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">

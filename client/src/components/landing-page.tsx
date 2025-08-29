@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -148,7 +148,7 @@ export function LandingPage() {
             >
               {navItems.map((item, idx) => (
                 <a
-                  key={`mobile-link-${idx}`}
+                  key={'mobile-link-' + idx}
                   href={item.link}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="relative text-neutral-600 dark:text-neutral-300"
