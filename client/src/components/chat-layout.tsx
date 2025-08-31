@@ -1,4 +1,4 @@
-'use client';
+  'use client';
 
 import { useState, useEffect } from 'react';
 import { AppSidebar } from '@/components/app-sidebar';
@@ -15,8 +15,6 @@ export function ChatLayout() {
     name: 'General',
     isPrivate: false
   });
-  
-  const memberCount = 24;
   
   // Username state
   const [username, setUsername] = useState<string>('');
@@ -35,43 +33,49 @@ export function ChatLayout() {
     {
       id: '1',
       content: 'Welcome to the General room!',
-      role: 'system',
+      role: 'others',
       username: 'System',
+      profileUrl: '',
       timestamp: new Date(),
     },
     {
       id: '2',
       content: 'Hey everyone! How are you all doing today?',
-      role: 'user',
+      role: 'currentUser',
       username: 'Alex',
+      profileUrl: '',
       timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
     },
     {
       id: '3',
       content: "I'm doing great! Just finished working on a new project.",
-      role: 'system',
+      role: 'others',
       username: 'Taylor',
+      profileUrl: '',
       timestamp: new Date(Date.now() - 1000 * 60 * 14), // 14 minutes ago
     },
     {
       id: '4',
       content: 'What kind of project are you working on?',
-      role: 'user',
+      role: 'currentUser',
       username: 'You',
+      profileUrl: '',
       timestamp: new Date(Date.now() - 1000 * 60 * 10), // 10 minutes ago
     },
     {
       id: '5',
       content: "It's a new chat application using React and WebSocket. I'm trying to make it as user-friendly as possible.",
-      role: 'system',
+      role: 'others',
       username: 'Taylor',
+      profileUrl: '',
       timestamp: new Date(Date.now() - 1000 * 60 * 8), // 8 minutes ago
     },
     {
       id: '6',
       content: "That sounds interesting! I've been working with WebSocket recently too. Let me know if you need any help with that.",
-      role: 'user',
+      role: 'currentUser',
       username: 'You',
+      profileUrl: '',
       timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
     },
   ]);
@@ -81,8 +85,9 @@ export function ChatLayout() {
     const newMessage: MessageProps = {
       id: generateRoomId(),
       content,
-      role: 'user',
+      role: 'currentUser',
       username: username || 'You',
+      profileUrl: '',
       timestamp: new Date(),
     };
 
@@ -94,8 +99,9 @@ export function ChatLayout() {
       const responseMessage: MessageProps = {
         id: generateRoomId(),
         content: `You said: "${content}"`,
-        role: 'system',
+        role: 'others',
         username: 'Bot',
+        profileUrl: '',
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, responseMessage]);
@@ -115,7 +121,7 @@ export function ChatLayout() {
       {showUsernameInput && <UsernameInput onSubmit={handleUsernameSubmit} />}
       <AppSidebar username={username} />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <ChatHeader memberCount={memberCount} />
+        <ChatHeader />
         <div className="flex-1 min-h-0 overflow-auto relative bg-background">
           <div className="mx-auto w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
             <Messages 
