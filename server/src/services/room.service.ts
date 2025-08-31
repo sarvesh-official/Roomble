@@ -9,7 +9,7 @@ export const createRoomService = async (data: CreateRoom) => {
     let exists = true;
 
     while (exists) {
-        roomCode =  await generateRoomId()
+        roomCode = await generateRoomId()
         roomCode = roomCode.toLowerCase();
         exists = await prisma.room.findUnique({ where: { id: roomCode } }) !== null
     }
@@ -19,25 +19,35 @@ export const createRoomService = async (data: CreateRoom) => {
             id: roomCode,
             name: data.name,
             description: data.description,
-            isPublic : data.isPublic,
-            creatorId : data.creatorId,
+            isPublic: data.isPublic,
+            creatorId: data.creatorId,
             tags: {
-                connect: data.tagIds?.map(tagId => ({ id: tagId })) // or ({ name: tag.name })
-              }
+                connect: data.tagIds?.map(tagId => ({ id: tagId }))
+            },
+            members: {
+                create: {
+                    userId: data.creatorId,
+                }
+            }
         },
-        include : {
-            tags :  true,
-            creator : true
+        include: {
+            tags: true,
+            creator: true,
+            members: {
+                include: {
+                    user: true,
+                }
+            }
         }
     })
 }
 
 
-export const joinRoomService = async({roomCode, userId}: JoinRoom) => {
+export const joinRoomService = async ({ roomCode, userId }: JoinRoom) => {
 
     const room = await prisma.room.findUnique({
-        where : {
-            id : roomCode.toLowerCase()
+        where: {
+            id: roomCode.toLowerCase()
         },
         include: {
             members: {
@@ -48,7 +58,7 @@ export const joinRoomService = async({roomCode, userId}: JoinRoom) => {
         }
     })
 
-    if (!room){
+    if (!room) {
         throw new Error("Room not found");
     }
 
@@ -56,7 +66,7 @@ export const joinRoomService = async({roomCode, userId}: JoinRoom) => {
 
     if (!isMember) {
         await prisma.roomMembers.create({
-            data:{
+            data: {
                 roomId: room.id,
                 userId,
             },
@@ -64,7 +74,7 @@ export const joinRoomService = async({roomCode, userId}: JoinRoom) => {
     }
 
     return await prisma.room.findUnique({
-        where: {id: room.id},
+        where: { id: room.id },
         include: {
             members: {
                 include: {

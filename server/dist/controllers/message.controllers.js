@@ -18,9 +18,11 @@ const sendMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (!roomId || !content || !senderId || !senderName) {
             return res.status(400).json({ message: "Missing required fields" });
         }
-        index_1.io.to(roomId).emit("new-message", { content, senderName, senderProfileUrl });
+        const lowerCaseRoomId = roomId.toLowerCase();
+        index_1.io.to(lowerCaseRoomId).emit("message", { content, senderName, senderProfileUrl });
+        console.log("Message sent to room: ", lowerCaseRoomId);
         const message = yield (0, message_service_1.addMessage)({
-            roomId,
+            roomId: lowerCaseRoomId,
             senderId,
             senderName,
             senderProfileUrl,
@@ -40,7 +42,7 @@ const fetchMessages = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!roomId) {
             return res.status(400).json({ message: "Missing roomId" });
         }
-        const messages = yield (0, message_service_1.getMessagesByRoom)(roomId);
+        const messages = yield (0, message_service_1.getMessagesByRoom)(roomId.toLowerCase());
         res.status(200).json(messages);
     }
     catch (err) {

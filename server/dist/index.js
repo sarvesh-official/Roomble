@@ -38,6 +38,14 @@ app.use("/api/rooms", authMiddleware_1.requireAuth, room_routes_1.default);
 app.use("/api/messages", authMiddleware_1.requireAuth, message_routes_1.default);
 exports.io.on("connection", (socket) => {
     console.log("connected ", socket.id);
+    socket.on("join-room", (roomId) => {
+        socket.join(roomId);
+        console.log(`Socket ${socket.id} joined room: ${roomId}`);
+    });
+    socket.on("leave-room", (roomId) => {
+        socket.leave(roomId);
+        console.log(`Socket ${socket.id} left room: ${roomId}`);
+    });
     socket.on("disconnect", () => {
         console.log("disconnected", socket.id);
     });

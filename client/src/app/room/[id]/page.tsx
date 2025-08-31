@@ -12,17 +12,24 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { Messages } from '@/components/messages';
 import { ChatInput } from '@/components/chat-input';
 import { ChatHeader } from '@/components/chat-header';
+import { useSocket } from '@/hooks/useSocket';
+import { useMessageApi } from '@/app/api/message';
+import { MessageProps } from '@/components/message';
 
 export default function RoomPage() {
+  
   const params = useParams();
+  const socket = useSocket();
   const router = useRouter();
   const { user, isLoaded: isUserLoaded } = useUser();
   const roomId = params?.id as string;
-  
+  const { getMessages, sendMessage } = useMessageApi();
+
   const [username, setUsername] = useState('');
   const [isJoined, setIsJoined] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [messages, setMessages] = useState<MessageProps[]>([]);
+
   type Participant = {
     id: string;
     name: string;
@@ -37,6 +44,31 @@ export default function RoomPage() {
     { id: '3', name: 'Taylor Wilson', isActive: false, avatar: null },
   ]);
   
+  useEffect(() => {
+    if (roomId && isJoined) {
+      fetchMessages();
+    }
+  }, [roomId, isJoined]);
+
+  // Fetch messages from API
+  const fetchMessages = async () => {
+    try {
+      const response = await getMessages(roomId.toLowerCase());
+      if (response && Array.isArray(response)) {
+        const formattedMessages = response.map((msg: any) => ({
+          id: msg.id,
+          content: msg.content,
+          role: user?.id === msg.senderId ? 'currentUser' as const : 'others' as const,
+          profileUrl: msg.senderProfileUrl || '',
+          username: msg.senderName,
+          timestamp: new Date(msg.createdAt || Date.now())
+        }));
+        setMessages(formattedMessages);
+      }
+    } catch (error) {
+      console.error('Failed to fetch messages:', error);
+    }
+  };
 
   useEffect(() => {
     if (user && username) {
@@ -54,13 +86,14 @@ export default function RoomPage() {
         ]);
       }
     }
+
   }, [user, username, participants]);
 
   useEffect(() => {
 
     if (isUserLoaded) {
       if (user) {
-
+        
         setUsername(user.fullName || user.username || user.firstName || '');
         setIsJoined(true);
         setIsLoading(false);
@@ -74,6 +107,51 @@ export default function RoomPage() {
       }
     }
   }, [user, isUserLoaded]);
+
+  useEffect(() => {
+    if (!socket || !roomId) return;
+    
+    const lowerCaseRoomId = roomId.toLowerCase();
+    socket.emit('join-room', lowerCaseRoomId);
+    console.log('Joining room:', lowerCaseRoomId);
+  
+    const handleNewMessage = (message: { content: string; senderName: string; senderProfileUrl: string }) => {
+      console.log('Received message:', message);
+      const newMessage: MessageProps = {
+        id: Date.now().toString(),
+        content: message.content,
+        role: username === message.senderName ? 'currentUser' as const : 'others' as const,
+        profileUrl: message.senderProfileUrl || '',
+        username: message.senderName,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, newMessage]);
+    };
+    
+    socket.on("message", handleNewMessage);
+  
+    return () => {
+      socket.emit('leave-room', lowerCaseRoomId);
+      socket.off("message", handleNewMessage);
+    };
+  }, [socket, roomId, username]);
+
+  const handleSendMessage = async (content: string) => {
+    if (!content.trim() || !roomId || !username) return;
+    
+    try {
+      await sendMessage({
+        roomId: roomId.toLowerCase(),
+        content,
+        senderId: user?.id || 'guest',
+        senderName: username,
+        senderProfileUrl: user?.imageUrl || ''
+      });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
+  };
+
 
   const handleJoinRoom = (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,7 +261,7 @@ export default function RoomPage() {
           <div className="flex-1 min-h-0 overflow-auto relative bg-background">
             <div className="mx-auto w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
               <Messages 
-                messages={[]} 
+                messages={messages} 
                 isTyping={false} 
                 roomName={roomId}
                 isPrivate={false}
@@ -192,7 +270,7 @@ export default function RoomPage() {
           </div>
           <div className="p-4 sticky bottom-0 z-10">
             <div className="mx-auto w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
-              <ChatInput onSend={() => {}} isDisabled={false} />
+              <ChatInput onSend={handleSendMessage} isDisabled={false} />
             </div>
           </div>
         </div>

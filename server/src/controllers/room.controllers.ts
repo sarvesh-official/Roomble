@@ -18,9 +18,9 @@ export const createRoom = async (req: Request, res: Response) => {
         }
 
         const creatorId: string = userId;
-        
+
         let allTagIds = [...(tagIds || [])];
-        
+
         if (customTags && Array.isArray(customTags) && customTags.length > 0) {
             const customTagIds = await findOrCreateTagsService(customTags);
             allTagIds = [...allTagIds, ...customTagIds];
@@ -28,15 +28,25 @@ export const createRoom = async (req: Request, res: Response) => {
 
         const room = await createRoomService({ name, description, isPublic, tagIds: allTagIds, creatorId })
 
+        const user = await userDetails(userId);
+
+        io.to(room.id).emit("user-joined", {
+            user
+        })
+
         if (isPublic) {
-            io.emit("new room", {
+            io.emit("new-room", {
                 id: room.id.toLocaleUpperCase(),
                 name: room.name,
                 isPublic: room.isPublic
             })
         }
 
-        res.status(201).json({ ...room, id: room.id.toUpperCase() });
+        res.status(201).json({ 
+            ...room, 
+            id: room.id.toUpperCase(),
+            members: room.members.map((m: { user: any }) => m.user)
+        });
         return;
     } catch (err) {
         console.error(err)

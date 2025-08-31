@@ -5,17 +5,20 @@ import { io } from "../index";
 export const sendMessage = async (req: Request, res: Response) => {
 
     try {
-
+    
         const { roomId, content, senderId, senderName, senderProfileUrl } = req.body;
 
         if (!roomId || !content || !senderId || !senderName) {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-            io.to(roomId).emit("new-message", { content, senderName, senderProfileUrl });
+        const lowerCaseRoomId = roomId.toLowerCase();
 
+        io.to(lowerCaseRoomId).emit("message", { content, senderName, senderProfileUrl });
+        console.log("Message sent to room: ", lowerCaseRoomId);
+        
         const message = await addMessage({
-            roomId,
+            roomId: lowerCaseRoomId,
             senderId,
             senderName,
             senderProfileUrl,
@@ -38,7 +41,7 @@ export const fetchMessages = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Missing roomId" });
     }
 
-    const messages = await getMessagesByRoom(roomId);
+    const messages = await getMessagesByRoom(roomId.toLowerCase());
 
     res.status(200).json(messages);
   } catch (err) {

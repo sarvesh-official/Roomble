@@ -46,6 +46,17 @@ app.use("/api/messages", requireAuth, messageRoutes)
 
 io.on("connection", (socket) => {
   console.log("connected ", socket.id);
+
+  socket.on("join-room", (roomId) => {
+    socket.join(roomId);
+    console.log(`Socket ${socket.id} joined room: ${roomId}`);
+  });
+
+  socket.on("leave-room", (roomId) => {
+    socket.leave(roomId);
+    console.log(`Socket ${socket.id} left room: ${roomId}`);
+  });
+
   socket.on("disconnect", () => {
     console.log("disconnected", socket.id);
   });
