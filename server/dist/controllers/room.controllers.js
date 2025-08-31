@@ -29,14 +29,18 @@ const createRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             allTagIds = [...allTagIds, ...customTagIds];
         }
         const room = yield (0, room_service_1.createRoomService)({ name, description, isPublic, tagIds: allTagIds, creatorId });
+        const user = yield (0, lib_1.userDetails)(userId);
+        __1.io.to(room.id).emit("user-joined", {
+            user
+        });
         if (isPublic) {
-            __1.io.emit("new room", {
+            __1.io.emit("new-room", {
                 id: room.id.toLocaleUpperCase(),
                 name: room.name,
                 isPublic: room.isPublic
             });
         }
-        res.status(201).json(Object.assign(Object.assign({}, room), { id: room.id.toUpperCase() }));
+        res.status(201).json(Object.assign(Object.assign({}, room), { id: room.id.toUpperCase(), members: room.members.map((m) => m.user) }));
         return;
     }
     catch (err) {

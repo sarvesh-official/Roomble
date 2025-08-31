@@ -14,7 +14,7 @@ const client_1 = require("../prisma/client");
 const addMessage = (data) => __awaiter(void 0, void 0, void 0, function* () {
     return client_1.prisma.message.create({
         data: {
-            roomId: data.roomId,
+            roomId: data.roomId.toLowerCase(),
             senderId: data.senderId,
             senderName: data.senderName,
             senderProfileUrl: data.senderProfileUrl,

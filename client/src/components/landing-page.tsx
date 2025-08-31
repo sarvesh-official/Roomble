@@ -40,7 +40,7 @@ export function LandingPage() {
   const [verificationError, setVerificationError] = useState('');
 
   const handleCreateRoom = () => {
-    // If not authenticated, redirect to sign-in
+
     if (!userId) {
       router.push('/sign-in');
       return;
@@ -58,32 +58,6 @@ export function LandingPage() {
       router.push(`/room/${roomId}`);
     }, 500);
   };
-
-  const handleJoinRoom = () => {
-    // If not authenticated, redirect to sign-in
-    if (!userId) {
-      router.push('/sign-in');
-      return;
-    }
-
-    // Validate room ID
-    if (!roomIdInput.trim()) {
-      setRoomIdError('Please enter a room ID');
-      return;
-    }
-
-    // Basic validation - alphanumeric and reasonable length
-    if (!/^[a-zA-Z0-9-_]{3,16}$/.test(roomIdInput.trim())) {
-      setRoomIdError('Invalid room ID format');
-      return;
-    }
-
-    // Move to verification code step
-    setVerificationStep('code');
-    setVerificationError('');
-  };
-
-  // Room verification is handled by the EnhancedOTPInput component
 
   const navItems = [
     {
@@ -103,9 +77,7 @@ export function LandingPage() {
   return (
     <>
       <div className="flex flex-col min-h-screen bg-background">
-        {/* Header with Resizable Navbar */}
         <Navbar className="top-0">
-          {/* Desktop Navigation */}
           <NavBody className="" visible={false}>
             <div className="flex items-center gap-2">
               <div className="size-8 overflow-hidden">

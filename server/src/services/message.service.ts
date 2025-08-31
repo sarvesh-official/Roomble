@@ -4,7 +4,7 @@ import { CreateMessageInput } from "../types/message.types";
 export const addMessage = async (data: CreateMessageInput) => {
     return prisma.message.create({
         data: {
-            roomId: data.roomId,
+            roomId: data.roomId.toLowerCase(),
             senderId: data.senderId,
             senderName: data.senderName,
             senderProfileUrl: data.senderProfileUrl,
@@ -14,6 +14,7 @@ export const addMessage = async (data: CreateMessageInput) => {
 }
 
 export const getMessagesByRoom = async (roomCode: string) => {
+
     return prisma.message.findMany({
         where: { roomId: roomCode }, orderBy: { createdAt: "asc" }
     })
