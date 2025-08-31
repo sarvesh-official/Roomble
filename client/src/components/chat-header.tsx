@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 interface ChatHeaderProps {
-  memberCount?: number;
   participants?: Array<{
     id: string;
     name: string;
@@ -33,7 +32,7 @@ interface ChatHeaderProps {
   }>;
 }
 
-export function ChatHeader({ memberCount = 24, participants }: ChatHeaderProps) {
+export function ChatHeader({ participants }: ChatHeaderProps) {
 
   const defaultParticipants = [
     { id: '1', name: 'Alex Smith', isActive: true, avatar: null },

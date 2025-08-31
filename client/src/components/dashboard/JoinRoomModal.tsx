@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRoomApi } from '@/app/api/room';
 import { toast } from 'sonner';
@@ -26,7 +26,7 @@ export function JoinRoomModal({ isOpen, onOpenChange, onSuccess }: JoinRoomModal
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { joinRoom } = useRoomApi();
-  const router = useRouter();
+  // const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function onSubmit(e?: React.FormEvent<HTMLFormElement>) {

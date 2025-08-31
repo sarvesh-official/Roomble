@@ -2,11 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { memo } from 'react';
-import { Sparkle, Reply } from 'lucide-react';
+import { Sparkle } from 'lucide-react'; // Reply removed - unused
 import { cn } from '@/lib/utils';
-import { MessageReactions } from './message-reactions';
-import { Button } from './ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import Image from 'next/image';
+// import { MessageReactions } from './message-reactions'; // Unused
+// import { Button } from './ui/button'; // Unused
+// import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'; // Unused
 
 export interface MessageProps {
   id: string;
@@ -56,7 +57,13 @@ function PureMessage({
             style={message.role === "currentUser" ? {backgroundColor: "var(--primary)"} : {backgroundColor: "var(--background)"}}
           >
             {message.profileUrl ? (
-              <img src={message.profileUrl} alt={message.username} className="h-full w-full object-cover" />
+              <Image 
+                src={message.profileUrl} 
+                alt={message.username} 
+                width={24} 
+                height={24} 
+                className="h-full w-full object-cover" 
+              />
             ) : (
               <div className="font-semibold text-xs"
                 style={message.role === "currentUser" ? {color: "var(--primary-foreground)"} : {}}
