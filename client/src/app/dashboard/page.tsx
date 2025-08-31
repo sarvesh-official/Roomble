@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { Search, Plus, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useSocket } from '@/hooks/useSocket';
+// import { useSocket } from '@/hooks/useSocket';
 import { useRoomApi } from '@/app/api/room';
 import { toast } from 'sonner';
 
@@ -85,7 +85,7 @@ export default function DashboardPage() {
     const { user } = useUser();
     const { joinRoom } = useRoomApi();
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeFilter, setActiveFilter] = useState('all');
+    // const [activeFilter, setActiveFilter] = useState('all');
     const [joinRoomModalOpen, setJoinRoomModalOpen] = useState(false);
     const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
@@ -94,7 +94,7 @@ export default function DashboardPage() {
     const [mounted, setMounted] = useState(false);
     const [rooms] = useState<Room[]>(mockRooms);
     const [isSearching, setIsSearching] = useState(false);
-    const [isCreatingRoom, setIsCreatingRoom] = useState(false);
+    const [isCreatingRoom] = useState(false);
     const [isJoiningRoom, setIsJoiningRoom] = useState(false);
 
     useEffect(() => {

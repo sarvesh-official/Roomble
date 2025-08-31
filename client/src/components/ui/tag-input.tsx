@@ -192,7 +192,7 @@ export function TagInput({
                   onSelect={() => handleCreateCustomTag()}
                 >
                   <Plus size={16} />
-                  Add "{inputValue}" as custom tag
+                  Add &quot;{inputValue}&quot; as custom tag
                 </CommandItem>
               )}
               

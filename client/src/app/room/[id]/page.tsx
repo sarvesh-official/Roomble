@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -20,7 +20,7 @@ export default function RoomPage() {
   
   const params = useParams();
   const socket = useSocket();
-  const router = useRouter();
+  // const router = useRouter();
   const { user, isLoaded: isUserLoaded } = useUser();
   const roomId = params?.id as string;
   const { getMessages, sendMessage } = useMessageApi();
@@ -44,18 +44,21 @@ export default function RoomPage() {
     { id: '3', name: 'Taylor Wilson', isActive: false, avatar: null },
   ]);
   
-  useEffect(() => {
-    if (roomId && isJoined) {
-      fetchMessages();
-    }
-  }, [roomId, isJoined]);
-
   // Fetch messages from API
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const response = await getMessages(roomId.toLowerCase());
       if (response && Array.isArray(response)) {
-        const formattedMessages = response.map((msg: any) => ({
+        interface ApiMessage {
+          id: string;
+          content: string;
+          senderId: string;
+          senderProfileUrl?: string;
+          senderName: string;
+          createdAt: string;
+        }
+        
+        const formattedMessages = response.map((msg: ApiMessage) => ({
           id: msg.id,
           content: msg.content,
           role: user?.id === msg.senderId ? 'currentUser' as const : 'others' as const,
@@ -68,7 +71,13 @@ export default function RoomPage() {
     } catch (error) {
       console.error('Failed to fetch messages:', error);
     }
-  };
+  }, [roomId, getMessages, user, setMessages]);
+  
+  useEffect(() => {
+    if (roomId && isJoined) {
+      fetchMessages();
+    }
+  }, [roomId, isJoined, fetchMessages]);
 
   useEffect(() => {
     if (user && username) {
@@ -256,7 +265,6 @@ export default function RoomPage() {
         <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
           <ChatHeader 
             participants={participants} 
-            memberCount={participants.filter(p => p.isActive).length} 
           />
           <div className="flex-1 min-h-0 overflow-auto relative bg-background">
             <div className="mx-auto w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl">
