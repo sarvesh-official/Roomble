@@ -36,18 +36,80 @@ app.use((0, express_2.clerkMiddleware)({ publishableKey: process.env.CLERK_PUBLI
 app.use("/api/tags", authMiddleware_1.requireAuth, tag_routes_1.default);
 app.use("/api/rooms", authMiddleware_1.requireAuth, room_routes_1.default);
 app.use("/api/messages", authMiddleware_1.requireAuth, message_routes_1.default);
+// Track room participants
+const roomParticipants = {};
 exports.io.on("connection", (socket) => {
     console.log("connected ", socket.id);
-    socket.on("join-room", (roomId) => {
+    socket.on("join-room", (roomId, userData) => {
+        // Join the socket to the room
         socket.join(roomId);
         console.log(`Socket ${socket.id} joined room: ${roomId}`);
+        // Initialize room participants array if it doesn't exist
+        if (!roomParticipants[roomId]) {
+            roomParticipants[roomId] = [];
+        }
+        // Add participant to the room
+        const participant = {
+            id: (userData === null || userData === void 0 ? void 0 : userData.userId) || socket.id,
+            name: (userData === null || userData === void 0 ? void 0 : userData.name) || 'Anonymous',
+            isActive: true,
+            avatar: (userData === null || userData === void 0 ? void 0 : userData.avatar) || null,
+            socketId: socket.id
+        };
+        // Check if participant already exists
+        const existingParticipantIndex = roomParticipants[roomId].findIndex(p => p.id === participant.id);
+        if (existingParticipantIndex >= 0) {
+            // Update existing participant
+            roomParticipants[roomId][existingParticipantIndex] = participant;
+        }
+        else {
+            // Add new participant
+            roomParticipants[roomId].push(participant);
+        }
+        // Notify all clients in the room about the new participant
+        exports.io.to(roomId).emit('participant-joined', participant);
+        // Send updated participants list to the room
+        exports.io.to(roomId).emit('room-participants', roomParticipants[roomId]);
+    });
+    socket.on("get-participants", (roomId) => {
+        // Send current participants list to the requesting client
+        if (roomParticipants[roomId]) {
+            socket.emit('room-participants', roomParticipants[roomId]);
+        }
+        else {
+            socket.emit('room-participants', []);
+        }
     });
     socket.on("leave-room", (roomId) => {
         socket.leave(roomId);
         console.log(`Socket ${socket.id} left room: ${roomId}`);
+        // Find and mark participant as inactive
+        if (roomParticipants[roomId]) {
+            const participantIndex = roomParticipants[roomId].findIndex(p => p.socketId === socket.id);
+            if (participantIndex >= 0) {
+                const participantId = roomParticipants[roomId][participantIndex].id;
+                roomParticipants[roomId][participantIndex].isActive = false;
+                // Notify all clients in the room about the participant leaving
+                exports.io.to(roomId).emit('participant-left', participantId);
+                // Send updated participants list to the room
+                exports.io.to(roomId).emit('room-participants', roomParticipants[roomId]);
+            }
+        }
     });
     socket.on("disconnect", () => {
         console.log("disconnected", socket.id);
+        // Find all rooms this socket was in and mark participant as inactive
+        Object.keys(roomParticipants).forEach(roomId => {
+            const participantIndex = roomParticipants[roomId].findIndex(p => p.socketId === socket.id);
+            if (participantIndex >= 0) {
+                const participantId = roomParticipants[roomId][participantIndex].id;
+                roomParticipants[roomId][participantIndex].isActive = false;
+                // Notify all clients in the room about the participant leaving
+                exports.io.to(roomId).emit('participant-left', participantId);
+                // Send updated participants list to the room
+                exports.io.to(roomId).emit('room-participants', roomParticipants[roomId]);
+            }
+        });
     });
 });
 server.listen(port, () => {

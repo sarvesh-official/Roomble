@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ThemeToggleButton } from '@/components/ui/theme-toggle-button';
 import { UserDropdown } from '@/components/user-dropdown';
+import { RoomNotifications } from '@/components/room-notification';
 
 export function DashboardHeader() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export function DashboardHeader() {
           <span className="font-semibold text-lg sm:text-xl">Roomble</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
+          <RoomNotifications />
           <ThemeToggleButton randomize={true} />
           <UserDropdown />
         </div>

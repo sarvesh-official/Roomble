@@ -18,52 +18,63 @@ function PureMessages({
   isTyping = false,
   roomName = 'General',
 }: MessagesProps) {
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [scrollContainer, setScrollContainer] = useState<HTMLElement | null>(null);
 
-  // Handle scroll to bottom
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  // Check if scrolled to bottom
   const handleScroll = () => {
-    if (!messagesContainerRef.current) return;
+    if (!scrollContainer) return;
     
-    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
     const isBottom = scrollHeight - scrollTop - clientHeight < 10;
     setIsAtBottom(isBottom);
+    
+    setUserScrolling(true);
+    
+    clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      setUserScrolling(false);
+    }, 150);
   };
+  
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    if (messagesEndRef.current) {
+    const container = document.getElementById('messages-scroll-container');
+    if (container) {
+      setScrollContainer(container);
+      container.addEventListener('scroll', handleScroll);
+      return () => {
+        container.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
+
+  const [userScrolling, setUserScrolling] = useState(false);
+  const lastMessageLengthRef = useRef(messages.length);
+  
+  useEffect(() => {
+
+    const hasNewMessage = messages.length > lastMessageLengthRef.current;
+    lastMessageLengthRef.current = messages.length;
+    
+    if (messagesEndRef.current && hasNewMessage && isAtBottom && !userScrolling) {
       scrollToBottom();
     }
-  }, [messages]);
-
-  // Set up scroll event listener
-  useEffect(() => {
-    const container = messagesContainerRef.current;
-    if (!container) return;
-
-    container.addEventListener('scroll', handleScroll);
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  }, [messages, isAtBottom, userScrolling]);
 
   return (
     <div className="relative flex flex-col flex-1 h-full overflow-hidden bg-background">
       {/* Room info header removed as requested */}
       
       <div
-        ref={messagesContainerRef}
-        className="flex flex-col min-w-0 gap-6 flex-1 h-full overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent"
-        onScroll={handleScroll}
+        className="flex flex-col min-w-0 gap-6 flex-1 h-full p-4"
       >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center p-8">
@@ -100,9 +111,8 @@ function PureMessages({
         />
       </div>
 
-      {/* Scroll to bottom button */}
       {!isAtBottom && messages.length > 0 && (
-        <div className="absolute bottom-4 right-4 z-10">
+        <div className="fixed bottom-20 right-4 z-10">
           <Button
             onClick={scrollToBottom}
             size="icon"

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.joinRoom = exports.createRoom = void 0;
+exports.ListJoinedRooms = exports.joinRoom = exports.createRoom = void 0;
 const express_1 = require("@clerk/express");
 const room_service_1 = require("../services/room.service");
 const lib_1 = require("../utils/lib");
@@ -75,3 +75,42 @@ const joinRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.joinRoom = joinRoom;
+const ListJoinedRooms = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId } = (0, express_1.getAuth)(req);
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized: No user ID found." });
+        }
+        const roomMemberships = yield (0, room_service_1.ListJoinedRoomsService)({ userId });
+        if (!roomMemberships || roomMemberships.length === 0) {
+            return res.status(200).json({ rooms: [] });
+        }
+        // Format the response with the required information
+        const formattedRooms = roomMemberships.map(membership => {
+            const isCreator = membership.room.creatorId === userId;
+            return {
+                id: membership.room.id,
+                name: membership.room.name,
+                description: membership.room.description,
+                status: isCreator ? 'owner' : 'member',
+                isPrivate: !membership.room.isPublic,
+                isCreator: isCreator,
+                createdAt: membership.room.createdAt,
+                updatedAt: membership.room.updatedAt,
+                creator: {
+                    id: membership.room.creator.id,
+                    name: membership.room.creator.name,
+                    profileUrl: membership.room.creator.profileUrl
+                },
+                memberCount: membership.room.members.length,
+                lastActivity: membership.room.updatedAt
+            };
+        });
+        return res.status(200).json({ rooms: formattedRooms });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Failed to list joined rooms" });
+    }
+});
+exports.ListJoinedRooms = ListJoinedRooms;

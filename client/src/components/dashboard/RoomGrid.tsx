@@ -11,9 +11,10 @@ interface RoomGridProps {
   searchQuery: string;
   onJoinRoom: (room: Room) => void;
   onCreateRoom: () => void;
+  isLoading?: boolean;
 }
 
-export function RoomGrid({ rooms, searchQuery, onJoinRoom, onCreateRoom }: RoomGridProps) {
+export function RoomGrid({ rooms, searchQuery, onJoinRoom, onCreateRoom, isLoading = false }: RoomGridProps) {
   return (
     <motion.div
       className="mb-8"
@@ -21,7 +22,16 @@ export function RoomGrid({ rooms, searchQuery, onJoinRoom, onCreateRoom }: RoomG
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
     >
-      {rooms.length > 0 ? (
+      {isLoading ? (
+        <div className="bg-card/50 border border-border/50 rounded-xl p-4 sm:p-8 text-center">
+          <div className="animate-pulse flex flex-col items-center">
+            <div className="h-12 w-12 rounded-full bg-muted mb-3"></div>
+            <div className="h-4 w-32 bg-muted rounded mb-2"></div>
+            <div className="h-3 w-48 bg-muted rounded mb-4"></div>
+            <div className="h-9 w-32 bg-muted rounded"></div>
+          </div>
+        </div>
+      ) : rooms.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {rooms.map((room, index) => (
             <RoomCard 

@@ -7,99 +7,107 @@ import { motion } from 'framer-motion';
 import { Search, Plus, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-// import { useSocket } from '@/hooks/useSocket';
 import { useRoomApi } from '@/app/api/room';
 import { toast } from 'sonner';
-
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { RoomFilters } from '@/components/dashboard/RoomFilters';
 import { RoomGrid } from '@/components/dashboard/RoomGrid';
 import { JoinRoomModal } from '@/components/dashboard/JoinRoomModal';
 import { CreateRoomModal } from '@/components/dashboard/CreateRoomModal';
+import { RoomNotifications } from '@/components/room-notification';
+import { useSocket } from '@/hooks/useSocket';
 import { Room } from '@/types/room';
 
-
-const mockRooms: Room[] = [
-    {
-        id: 'room-123',
-        name: 'Product Design Review',
-        description: 'Weekly design review for the new product features',
-        participants: 4,
-        lastActive: '2 hours ago',
-        tags: ['Design', 'Review'],
-        isPublic: false,
-        createdBy: 'John Doe',
-        createdByYou: true
-    },
-    {
-        id: 'room-101',
-        name: 'Marketing Strategy',
-        description: 'Planning our Q3 marketing campaigns',
-        participants: 5,
-        lastActive: '1 day ago',
-        tags: ['Marketing', 'Planning'],
-        featured: true,
-        isPublic: true,
-        createdBy: 'Sarah Johnson',
-        createdByYou: false
-    },
-    {
-        id: 'room-202',
-        name: 'Customer Feedback',
-        description: 'Discussing recent customer survey results',
-        participants: 8,
-        lastActive: '4 hours ago',
-        tags: ['Feedback', 'Customers'],
-        popular: true,
-        isPublic: true,
-        createdBy: 'Michael Brown',
-        createdByYou: false
-    },
-    {
-        id: 'room-303',
-        name: 'Private Brainstorming',
-        description: 'Confidential brainstorming session for new features',
-        participants: 3,
-        lastActive: '1 hour ago',
-        tags: ['Confidential', 'Planning'],
-        isPublic: false,
-        createdBy: 'John Doe',
-        createdByYou: true
-    },
-    {
-        id: 'room-404',
-        name: 'Public Q&A Session',
-        description: 'Open Q&A for community members',
-        participants: 12,
-        lastActive: '5 hours ago',
-        tags: ['Community', 'Q&A'],
-        popular: true,
-        isPublic: true,
-        createdBy: 'Emily Wilson',
-        createdByYou: false
-    }
-];
 
 export default function DashboardPage() {
     const router = useRouter();
     const { user } = useUser();
-    const { joinRoom } = useRoomApi();
+    const { joinRoom, getJoinedRooms } = useRoomApi();
+    const { socket } = useSocket(); 
     const [searchQuery, setSearchQuery] = useState('');
-    // const [activeFilter, setActiveFilter] = useState('all');
     const [joinRoomModalOpen, setJoinRoomModalOpen] = useState(false);
     const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('all');
     const [visibilityTab, setVisibilityTab] = useState('public');
     const [mounted, setMounted] = useState(false);
-    const [rooms] = useState<Room[]>(mockRooms);
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isSearching, setIsSearching] = useState(false);
     const [isCreatingRoom] = useState(false);
     const [isJoiningRoom, setIsJoiningRoom] = useState(false);
+    
+    // Debug socket connection
+    useEffect(() => {
+        console.log('Dashboard: Socket state:', socket ? 'connected' : 'not connected');
+        
+        if (socket) {
+            // Test socket connection
+            socket.on('connect', () => {
+                console.log('Dashboard: Socket connected');
+            });
+            
+            // Debug new-room events
+            socket.on('new-room', (data) => {
+                console.log('Dashboard: Received new-room event directly:', data);
+            });
+        }
+        
+        return () => {
+            if (socket) {
+                socket.off('new-room');
+            }
+        };
+    }, [socket]);
 
     useEffect(() => {
         setMounted(true);
+        
+        // Fetch joined rooms when component mounts
+        const fetchRooms = async () => {
+            try {
+                setIsLoading(true);
+                const response = await getJoinedRooms();
+                
+                // Map API response to Room type
+                const formattedRooms = response.rooms.map((room: any) => ({
+                    id: room.id,
+                    name: room.name,
+                    description: room.description,
+                    participants: room.memberCount,
+                    lastActive: formatLastActive(new Date(room.lastActivity)),
+                    isPublic: !room.isPrivate,
+                    createdBy: room.creator.name,
+                    createdByYou: room.isCreator,
+                    // Optional fields
+                    tags: [],
+                    featured: false,
+                    popular: room.memberCount > 5
+                }));
+                
+                setRooms(formattedRooms);
+            } catch (error) {
+                console.error('Failed to fetch rooms:', error);
+                toast.error('Failed to load rooms');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        
+        fetchRooms();
     }, []);
+    
+    const formatLastActive = (date: Date): string => {
+        const now = new Date();
+        const diffMs = now.getTime() - date.getTime();
+        const diffMins = Math.round(diffMs / 60000);
+        const diffHours = Math.round(diffMs / 3600000);
+        const diffDays = Math.round(diffMs / 86400000);
+        
+        if (diffMins < 60) return `${diffMins} min${diffMins !== 1 ? 's' : ''} ago`;
+        if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+    };
     
 
     useEffect(() => {
@@ -227,7 +235,7 @@ export default function DashboardPage() {
 
                     {/* Rooms Grid */}
                     <motion.div variants={itemVariants}>
-                        {isSearching && (
+                        {!isLoading && isSearching && (
                             <div className="flex justify-center py-2 text-sm text-muted-foreground">
                                 <span>Searching...</span>
                             </div>
@@ -235,6 +243,7 @@ export default function DashboardPage() {
                         <RoomGrid 
                             rooms={filteredRooms}
                             searchQuery={debouncedSearchQuery}
+                            isLoading={isLoading}
                             onJoinRoom={(room) => {
 
                                 setIsJoiningRoom(true);

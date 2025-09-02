@@ -1,6 +1,6 @@
 import { getAuth } from "@clerk/express";
 import { Request, Response } from "express";
-import { createRoomService, joinRoomService } from "../services/room.service";
+import { createRoomService, joinRoomService, ListJoinedRoomsService } from "../services/room.service";
 import { userDetails } from "../utils/lib";
 import { findOrCreateTagsService } from "../services/tag.service";
 import { io } from "..";
@@ -35,11 +35,17 @@ export const createRoom = async (req: Request, res: Response) => {
         })
 
         if (isPublic) {
+            console.log('Emitting new-room event:', {
+                id: room.id.toLocaleUpperCase(),
+                name: room.name,
+                isPublic: room.isPublic
+            });
+            
             io.emit("new-room", {
                 id: room.id.toLocaleUpperCase(),
                 name: room.name,
                 isPublic: room.isPublic
-            })
+            });
         }
 
         res.status(201).json({ 
@@ -94,5 +100,50 @@ export const joinRoom = async (req: Request, res: Response) => {
         console.log(err)
         res.status(500).json("Failed to join room");
 
+    }
+}
+
+export const ListJoinedRooms = async (req: Request, res: Response) => {
+    try {
+        const { userId } = getAuth(req);
+
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized: No user ID found." });
+        }
+
+        const roomMemberships = await ListJoinedRoomsService({ userId });
+
+        if (!roomMemberships || roomMemberships.length === 0) {
+            return res.status(200).json({ rooms: [] });
+        }
+
+        // Format the response with the required information
+        const formattedRooms = roomMemberships.map(membership => {
+            const isCreator = membership.room.creatorId === userId;
+            
+            return {
+                id: membership.room.id,
+                name: membership.room.name,
+                description: membership.room.description,
+                status: isCreator ? 'owner' : 'member', 
+                isPrivate: !membership.room.isPublic,
+                isCreator: isCreator,
+                createdAt: membership.room.createdAt,
+                updatedAt: membership.room.updatedAt,
+                creator: {
+                    id: membership.room.creator.id,
+                    name: membership.room.creator.name,
+                    profileUrl: membership.room.creator.profileUrl
+                },
+
+                memberCount: membership.room.members.length,
+                lastActivity: membership.room.updatedAt
+            };
+        });
+
+        return res.status(200).json({ rooms: formattedRooms });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Failed to list joined rooms" });
     }
 }

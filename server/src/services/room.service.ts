@@ -84,3 +84,19 @@ export const joinRoomService = async ({ roomCode, userId }: JoinRoom) => {
         }
     });
 }
+
+export const ListJoinedRoomsService = async ({ userId }: { userId: string }) => {
+    return await prisma.roomMembers.findMany({
+        where: {
+            userId,
+        },
+        include: {
+            room: {
+                include: {
+                    creator: true,
+                    members: true
+                }
+            }
+        }
+    })
+}
