@@ -19,7 +19,7 @@ const sendMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             return res.status(400).json({ message: "Missing required fields" });
         }
         const lowerCaseRoomId = roomId.toLowerCase();
-        index_1.io.to(lowerCaseRoomId).emit("message", { content, senderName, senderProfileUrl });
+        index_1.io.to(lowerCaseRoomId).emit("message", { content, senderName, senderProfileUrl, senderId });
         console.log("Message sent to room: ", lowerCaseRoomId);
         const message = yield (0, message_service_1.addMessage)({
             roomId: lowerCaseRoomId,

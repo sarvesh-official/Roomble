@@ -1,4 +1,4 @@
-import { CreateRoom, JoinRoom } from "@/types/room";
+import { CreateRoom, JoinRoom, Room } from "@/types/room";
 import { createApiClient } from "./apiClient";
 import { useAuth } from "@clerk/nextjs";
 
@@ -24,5 +24,13 @@ export const useRoomApi = () => {
     return response.json();
   };
 
-  return { createRoom, joinRoom };
+  const getJoinedRooms = async (): Promise<{ rooms: Room[] }> => {
+    const response = await apiRequest("/api/rooms/joined-rooms", {
+      method: 'GET',
+    });
+
+    return response.json();
+  };
+
+  return { createRoom, joinRoom, getJoinedRooms };
 };

@@ -4,17 +4,37 @@ let socket: Socket | null = null;
 
 export function initSocket(){
 
-    if(!socket){
-        socket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000");
+    if (socket && !socket.connected) {
+        console.log("Socket exists but disconnected. Reconnecting...");
+        socket.connect();
     }
 
-    socket.on("connect", () => {
-        console.log("Socket connected", socket?.id);
-    })
+    if (!socket) {
+        console.log("Creating new socket connection");
+        socket = io(process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000", {
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            autoConnect: true,
+            forceNew: false,
+            transports: ['websocket', 'polling']
+        });
 
-    socket.on("disconnect", () => {
-        console.log("Socket disconnected", socket?.id);
-    })
+        socket.on("connect", () => {
+            console.log("Socket connected", socket?.id);
+        });
+
+        socket.on("connect_error", (error) => {
+            console.error("Socket connection error:", error);
+        });
+
+        socket.on("disconnect", (reason) => {
+            console.log("Socket disconnected", socket?.id, "Reason:", reason);
+            
+            if (reason === 'io server disconnect') {
+                socket?.connect();
+            }
+        });
+    }
 
     return socket;
 }

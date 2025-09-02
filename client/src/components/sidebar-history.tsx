@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { LoaderIcon, Star } from 'lucide-react';
+import { useRoomApi } from '@/app/api/room';
+import { toast } from 'sonner';
 
 import {
   SidebarGroup,
@@ -11,37 +13,61 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-// Import the ChatItem component from app-sidebar.tsx
 import { ChatItem } from './app-sidebar';
 
-// Mock data for room list
 interface RoomItemData {
   id: string;
   name: string;
   category: 'favorites' | 'public' | 'private';
   isPrivate: boolean;
   memberCount: number;
+  isCreator: boolean;
 }
-
-const mockRooms: RoomItemData[] = [
-  { id: '1', name: 'General', category: 'favorites', isPrivate: false, memberCount: 24 },
-  { id: '2', name: 'Design Team', category: 'favorites', isPrivate: true, memberCount: 8 },
-  { id: '3', name: 'Development', category: 'public', isPrivate: false, memberCount: 16 },
-  { id: '4', name: 'Marketing', category: 'public', isPrivate: false, memberCount: 12 },
-  { id: '5', name: 'Project Alpha', category: 'private', isPrivate: true, memberCount: 5 },
-  { id: '6', name: 'Secret Room', category: 'private', isPrivate: true, memberCount: 3 },
-];
 
 export function SidebarHistory() {
   const { setOpenMobile } = useSidebar();
   const params = useParams();
   const id = params?.id as string;
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [rooms, setRooms] = useState<RoomItemData[]>([]);
+  const { getJoinedRooms } = useRoomApi();
+  
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getJoinedRooms();
+        
+        const formattedRooms = response.rooms.map((room: any) => {
 
-  // Filter rooms by category
-  const favoriteRooms = mockRooms.filter(room => room.category === 'favorites');
-  const publicRooms = mockRooms.filter(room => room.category === 'public');
-  const privateRooms = mockRooms.filter(room => room.category === 'private');
+          const category: 'favorites' | 'public' | 'private' = room.isPrivate ? 'private' : 'public';
+          
+          return {
+            id: room.id,
+            name: room.name,
+            category,
+            isPrivate: room.isPrivate,
+            memberCount: room.memberCount,
+            isCreator: room.isCreator
+          };
+        });
+        
+        setRooms(formattedRooms);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch rooms:', error);
+        toast.error('Failed to load rooms');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchRooms();
+  }, []);
+
+  const favoriteRooms: RoomItemData[] = [];
+  const publicRooms = rooms.filter(room => !room.isPrivate);
+  const privateRooms = rooms.filter(room => room.isPrivate);
 
   return (
     <>

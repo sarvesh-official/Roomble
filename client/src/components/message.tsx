@@ -2,13 +2,10 @@
 
 import { motion } from 'framer-motion';
 import { memo } from 'react';
-import { Sparkle } from 'lucide-react'; // Reply removed - unused
+import { Sparkle } from 'lucide-react'; 
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-// import { MessageReactions } from './message-reactions'; // Unused
-// import { Button } from './ui/button'; // Unused
-// import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'; // Unused
-
+  
 export interface MessageProps {
   id: string;
   content: string;
@@ -33,7 +30,7 @@ function PureMessage({
     <motion.div
       data-testid={`message-${message.role}`}
       className={cn(
-        "w-full mx-auto max-w-4xl px-4 group/message",
+        "w-full mx-auto max-w-4xl px-4 group/message pb-4",
         message.role === "currentUser" ? "items-end" : "items-start"
       )}
       initial={{ y: 5, opacity: 0 }}
@@ -99,7 +96,7 @@ export const Message = memo(PureMessage);
 
 export function ThinkingMessage() {
   return (
-    <div className="w-full mx-auto max-w-4xl px-4">
+    <div className="w-full mx-auto max-w-4xl px-4 pb-2">
       <div className="flex flex-col max-w-[80%]">
         {/* User info row with avatar and name */}
         <div className="flex items-center gap-2 mb-1">

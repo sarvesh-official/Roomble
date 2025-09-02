@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.joinRoomService = exports.createRoomService = void 0;
+exports.ListJoinedRoomsService = exports.joinRoomService = exports.createRoomService = void 0;
 const client_1 = require("../prisma/client");
 const lib_1 = require("../utils/lib");
 const createRoomService = (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -86,3 +86,19 @@ const joinRoomService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ roo
     });
 });
 exports.joinRoomService = joinRoomService;
+const ListJoinedRoomsService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ userId }) {
+    return yield client_1.prisma.roomMembers.findMany({
+        where: {
+            userId,
+        },
+        include: {
+            room: {
+                include: {
+                    creator: true,
+                    members: true
+                }
+            }
+        }
+    });
+});
+exports.ListJoinedRoomsService = ListJoinedRoomsService;

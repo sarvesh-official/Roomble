@@ -33,14 +33,8 @@ interface ChatHeaderProps {
 }
 
 export function ChatHeader({ participants }: ChatHeaderProps) {
-
-  const defaultParticipants = [
-    { id: '1', name: 'Alex Smith', isActive: true, avatar: null },
-    { id: '2', name: 'Jamie Doe', isActive: true, avatar: null },
-    { id: '3', name: 'Taylor Wilson', isActive: false, avatar: null },
-  ];
-
-  const roomParticipants = participants || defaultParticipants;
+  // Use empty array as default instead of mock data
+  const roomParticipants = participants || [];
   const router = useRouter();
   const { open } = useSidebar();
   const { width: windowWidth } = useWindowSize();

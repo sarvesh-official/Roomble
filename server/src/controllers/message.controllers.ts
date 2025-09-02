@@ -14,7 +14,7 @@ export const sendMessage = async (req: Request, res: Response) => {
 
         const lowerCaseRoomId = roomId.toLowerCase();
 
-        io.to(lowerCaseRoomId).emit("message", { content, senderName, senderProfileUrl });
+        io.to(lowerCaseRoomId).emit("message", { content, senderName, senderProfileUrl, senderId });
         console.log("Message sent to room: ", lowerCaseRoomId);
         
         const message = await addMessage({
