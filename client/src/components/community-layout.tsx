@@ -146,7 +146,7 @@ export function CommunityLayout() {
   const [viewMode, setViewMode] = useState('grid');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Define loadRooms function with useCallback to avoid dependency issues
+
   const loadRooms = useCallback(() => {
     setLoading(true);
 
