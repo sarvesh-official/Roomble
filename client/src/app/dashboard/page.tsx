@@ -14,7 +14,6 @@ import { RoomFilters } from '@/components/dashboard/RoomFilters';
 import { RoomGrid } from '@/components/dashboard/RoomGrid';
 import { JoinRoomModal } from '@/components/dashboard/JoinRoomModal';
 import { CreateRoomModal } from '@/components/dashboard/CreateRoomModal';
-import { RoomNotifications } from '@/components/room-notification';
 import { useSocket } from '@/hooks/useSocket';
 import { Room } from '@/types/room';
 
@@ -70,19 +69,19 @@ export default function DashboardPage() {
                 const response = await getJoinedRooms();
                 
                 // Map API response to Room type
-                const formattedRooms = response.rooms.map((room: any) => ({
+                const formattedRooms = response.rooms.map((room: Room) => ({
                     id: room.id,
                     name: room.name,
                     description: room.description,
-                    participants: room.memberCount,
-                    lastActive: formatLastActive(new Date(room.lastActivity)),
-                    isPublic: !room.isPrivate,
-                    createdBy: room.creator.name,
-                    createdByYou: room.isCreator,
+                    participants: room.participants,
+                    lastActive: room.lastActive,
+                    isPublic: room.isPublic,
+                    createdBy: room.createdBy,
+                    createdByYou: room.createdByYou,
                     // Optional fields
                     tags: [],
                     featured: false,
-                    popular: room.memberCount > 5
+                    popular: room.participants > 5
                 }));
                 
                 setRooms(formattedRooms);
@@ -95,7 +94,7 @@ export default function DashboardPage() {
         };
         
         fetchRooms();
-    }, []);
+    }, [getJoinedRooms]);
     
     const formatLastActive = (date: Date): string => {
         const now = new Date();
