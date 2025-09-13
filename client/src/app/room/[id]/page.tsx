@@ -103,7 +103,7 @@ export default function RoomPage() {
       fetchMessages();
     }
     return () => { isMounted = false; };
-  }, [roomId, isJoined]);
+  }, [roomId, isJoined, fetchMessages]);
 
   useEffect(() => {
     if (user && username) {
@@ -120,7 +120,7 @@ export default function RoomPage() {
         ]);
       }
     }
-  }, [username]);
+  }, [username, user, participants]);
 
   useEffect(() => {
 
@@ -138,7 +138,7 @@ export default function RoomPage() {
       }
     }
 
-  }, [isUserLoaded, user?.id]);
+  }, [isUserLoaded, user?.id, user]);
 
   useEffect(() => {
     if (!socket || !roomId) {
@@ -235,7 +235,7 @@ export default function RoomPage() {
       socket.off("room-participants", handleRoomParticipants);
       socket.off("connect", handleReconnect);
     };
-  }, [socket, roomId, user?.id, username]);
+  }, [socket, roomId, user?.id, username, user?.imageUrl]);
 
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || !roomId || !username) return;
