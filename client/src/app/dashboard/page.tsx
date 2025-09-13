@@ -36,17 +36,15 @@ export default function DashboardPage() {
     const [isCreatingRoom] = useState(false);
     const [isJoiningRoom, setIsJoiningRoom] = useState(false);
     
-    // Debug socket connection
     useEffect(() => {
         console.log('Dashboard: Socket state:', socket ? 'connected' : 'not connected');
         
         if (socket) {
-            // Test socket connection
+
             socket.on('connect', () => {
                 console.log('Dashboard: Socket connected');
             });
             
-            // Debug new-room events
             socket.on('new-room', (data) => {
                 console.log('Dashboard: Received new-room event directly:', data);
             });
@@ -62,13 +60,11 @@ export default function DashboardPage() {
     useEffect(() => {
         setMounted(true);
         
-        // Fetch joined rooms when component mounts
         const fetchRooms = async () => {
             try {
                 setIsLoading(true);
                 const response = await getJoinedRooms();
                 
-                // Map API response to Room type
                 const formattedRooms = response.rooms.map((room: Room) => ({
                     id: room.id,
                     name: room.name,
@@ -78,7 +74,6 @@ export default function DashboardPage() {
                     isPublic: room.isPublic,
                     createdBy: room.createdBy,
                     createdByYou: room.createdByYou,
-                    // Optional fields
                     tags: [],
                     featured: false,
                     popular: room.participants > 5
@@ -96,19 +91,6 @@ export default function DashboardPage() {
         fetchRooms();
     }, [getJoinedRooms]);
     
-    const formatLastActive = (date: Date): string => {
-        const now = new Date();
-        const diffMs = now.getTime() - date.getTime();
-        const diffMins = Math.round(diffMs / 60000);
-        const diffHours = Math.round(diffMs / 3600000);
-        const diffDays = Math.round(diffMs / 86400000);
-        
-        if (diffMins < 60) return `${diffMins} min${diffMins !== 1 ? 's' : ''} ago`;
-        if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
-        return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-    };
-    
-
     useEffect(() => {
         setIsSearching(true);
         const timer = setTimeout(() => {
