@@ -20,7 +20,6 @@ import { Room } from '@/types/room';
 
 export default function DashboardPage() {
     const router = useRouter();
-    const { user } = useUser();
     const { joinRoom, getJoinedRooms } = useRoomApi();
     const { socket } = useSocket(); 
     const [searchQuery, setSearchQuery] = useState('');

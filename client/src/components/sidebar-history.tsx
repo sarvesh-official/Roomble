@@ -38,7 +38,7 @@ export function SidebarHistory() {
         setIsLoading(true);
         const response = await getJoinedRooms();
         
-        const formattedRooms = response.rooms.map((room: any) => {
+        const formattedRooms = response.rooms.map((room: { id: string; name: string; isPrivate?: boolean; memberCount?: number; isCreator?: boolean }) => {
 
           const category: 'favorites' | 'public' | 'private' = room.isPrivate ? 'private' : 'public';
           
@@ -46,9 +46,9 @@ export function SidebarHistory() {
             id: room.id,
             name: room.name,
             category,
-            isPrivate: room.isPrivate,
-            memberCount: room.memberCount,
-            isCreator: room.isCreator
+            isPrivate: room.isPrivate || false,
+            memberCount: room.memberCount || 0,
+            isCreator: room.isCreator || false
           };
         });
         
