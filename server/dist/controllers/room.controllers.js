@@ -34,6 +34,11 @@ const createRoom = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             user
         });
         if (isPublic) {
+            console.log('Emitting new-room event:', {
+                id: room.id.toLocaleUpperCase(),
+                name: room.name,
+                isPublic: room.isPublic
+            });
             __1.io.emit("new-room", {
                 id: room.id.toLocaleUpperCase(),
                 name: room.name,

@@ -88,7 +88,7 @@ export default function DashboardPage() {
         };
         
         fetchRooms();
-    }, [getJoinedRooms]);
+    }, []);
     
     useEffect(() => {
         setIsSearching(true);
