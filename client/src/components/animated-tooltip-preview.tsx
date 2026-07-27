@@ -9,7 +9,7 @@ const people = [
     designation: "SDE Intern at Lowe's",
     image: "/profilepic.png",
     githubUrl: "https://github.com/sarvesh-official",
-    portfolioUrl: "https://sarvee.dev"
+    portfolioUrl: "https://sarvee.in"
   },
 ];
 
