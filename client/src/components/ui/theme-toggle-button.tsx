@@ -97,8 +97,23 @@ export function ThemeToggleButton({
 
     if (typeof window === "undefined") return
 
+    const newTheme = resolvedTheme === "dark" ? "light" : "dark"
+
     const switchTheme = () => {
-      setTheme(resolvedTheme === "dark" ? "light" : "dark")
+      // Directly toggle the class on <html> so the DOM updates
+      // synchronously before the browser captures the "new" screenshot.
+      // setTheme() is async (React state) and would cause a flicker
+      // after the animation ends because the view transition would
+      // capture the old DOM state as the "new" screenshot.
+      const root = document.documentElement
+      if (newTheme === "dark") {
+        root.classList.add("dark")
+      } else {
+        root.classList.remove("dark")
+      }
+      root.style.colorScheme = newTheme
+      // Sync React state with the DOM change
+      setTheme(newTheme)
     }
 
     if (!document.startViewTransition) {
