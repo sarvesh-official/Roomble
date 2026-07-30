@@ -34,9 +34,9 @@ export function ThemeToggleButton({
   url = "",
   randomize = false
 }: ThemeToggleAnimationProps) {
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
-  
+
   React.useEffect(() => {
     setMounted(true)
   }, [])
@@ -44,16 +44,16 @@ export function ThemeToggleButton({
   const getRandomAnimation = React.useCallback(() => {
     const variants: AnimationVariant[] = ["circle-blur", "circle", "gif"]
     const positions: AnimationStart[] = ["top-left", "top-right", "bottom-left", "bottom-right"]
-    
+
     const randomVariant = variants[Math.floor(Math.random() * variants.length)]
     const randomPosition = positions[Math.floor(Math.random() * positions.length)]
-    
-    const randomGifUrl = randomVariant === "gif" 
+
+    const randomGifUrl = randomVariant === "gif"
       ? THEME_TOGGLE_GIFS[Math.floor(Math.random() * THEME_TOGGLE_GIFS.length)]
       : ""
-    
-    return { 
-      variant: randomVariant, 
+
+    return {
+      variant: randomVariant,
       start: randomPosition,
       url: randomGifUrl
     }
@@ -76,29 +76,29 @@ export function ThemeToggleButton({
   }, [])
 
   const toggleTheme = React.useCallback(() => {
-    // Use random animation parameters if randomize is true
+    if (!mounted) return
+
     let animVariant = variant
     let animStart = start
     let animUrl = url
-    
+
     if (randomize) {
       const randomAnim = getRandomAnimation()
       animVariant = randomAnim.variant
       animStart = randomAnim.start
-      
-      // Use the random GIF URL if the variant is gif
+
       if (randomAnim.variant === "gif" && randomAnim.url) {
         animUrl = randomAnim.url
       }
     }
-    
+
     const animation = createAnimation(animVariant, animStart, animUrl)
     updateStyles(animation.css)
 
     if (typeof window === "undefined") return
 
     const switchTheme = () => {
-      setTheme(theme === "light" ? "dark" : "light")
+      setTheme(resolvedTheme === "dark" ? "light" : "dark")
     }
 
     if (!document.startViewTransition) {
@@ -107,16 +107,25 @@ export function ThemeToggleButton({
     }
 
     try {
-      const transition = document.startViewTransition(switchTheme)
-      transition.ready.catch(() => switchTheme())
+      document.startViewTransition(switchTheme)
     } catch {
       switchTheme()
     }
-  }, [theme, setTheme, variant, start, url, randomize, getRandomAnimation, updateStyles])
+  }, [mounted, resolvedTheme, setTheme, variant, start, url, randomize, getRandomAnimation, updateStyles])
 
-  // Only render the button after client-side hydration to prevent SSR issues
   if (!mounted) {
-    return null
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-9 p-0 h-9 relative group"
+        name="Theme Toggle Button"
+      >
+        <SunIcon className="size-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+        <MoonIcon className="absolute size-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        <span className="sr-only">Theme Toggle</span>
+      </Button>
+    )
   }
 
   return (
