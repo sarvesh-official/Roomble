@@ -27,7 +27,7 @@ const getClipOrigin = (start: AnimationStart) => {
 export const createAnimation = (
   variant: AnimationVariant,
   start: AnimationStart,
-  _url?: string
+  url?: string
 ): Animation => {
   const origin = getClipOrigin(start)
 
@@ -68,6 +68,7 @@ export const createAnimation = (
       css: `
       ::view-transition-group(root) {
         animation-duration: 3s;
+        animation-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
       }
 
       ::view-transition-old(root),
@@ -77,22 +78,23 @@ export const createAnimation = (
       }
 
       ::view-transition-new(root) {
-        animation: reveal-gif 3s ease-in;
+        mask: url('${url}') center / 0 no-repeat;
+        animation: reveal-gif-${start} 3s cubic-bezier(0.7, 0, 0.84, 0);
         z-index: 2;
       }
 
-      @keyframes reveal-gif {
-        from {
-          clip-path: circle(0% at ${origin});
+      @keyframes reveal-gif-${start} {
+        0% {
+          mask-size: 0;
         }
         10% {
-          clip-path: circle(50% at ${origin});
+          mask-size: 50vmax;
         }
         90% {
-          clip-path: circle(50% at ${origin});
+          mask-size: 50vmax;
         }
-        to {
-          clip-path: circle(200% at ${origin});
+        100% {
+          mask-size: 2000vmax;
         }
       }
       `,
