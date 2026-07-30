@@ -13,12 +13,12 @@ import {
 } from "./theme/theme-animations"
 
 export const THEME_TOGGLE_GIFS = [
-  "https://media.giphy.com/media/KBbr4hHl9DSahKvInO/giphy.gif?cid=790b76112m5eeeydoe7et0cr3j3ekb1erunxozyshuhxx2vl&ep=v1_stickers_search&rid=giphy.gif&ct=s",
-  "https://media.giphy.com/media/5PncuvcXbBuIZcSiQo/giphy.gif?cid=ecf05e47j7vdjtytp3fu84rslaivdun4zvfhej6wlvl6qqsz&ep=v1_stickers_search&rid=giphy.gif&ct=s",
-  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3JwcXdzcHd5MW92NWprZXVpcTBtNXM5cG9obWh0N3I4NzFpaDE3byZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/WgsVx6C4N8tjy/giphy.gif",
-  "https://media.giphy.com/media/ArfrRmFCzYXsC6etQX/giphy.gif?cid=ecf05e47kn81xmnuc9vd5g6p5xyjt14zzd3dzwso6iwgpvy3&ep=v1_stickers_search&rid=giphy.gif&ct=s",
-  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWI1ZmNvMGZyemhpN3VsdWp4azYzcWUxcXIzNGF0enp0eW1ybjF0ZyZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/Fa6uUw8jgJHFVS6x1t/giphy.gif",
-  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGlkaG40MTA2MWE0em0wZ2NjcGtwZXFsdThpZHZtaXNyNThxamUydCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/FopJy18z4t5hHlViZn/giphy.gif",
+  "/theme-gifs/gif-1.gif",
+  "/theme-gifs/gif-2.gif",
+  "/theme-gifs/gif-3.gif",
+  "/theme-gifs/gif-4.gif",
+  "/theme-gifs/gif-5.gif",
+  "/theme-gifs/gif-6.gif",
 ]
 
 interface ThemeToggleAnimationProps {
@@ -106,23 +106,10 @@ export function ThemeToggleButton({
       return
     }
 
-    const startTransition = () => {
-      try {
-        document.startViewTransition(switchTheme)
-      } catch {
-        switchTheme()
-      }
-    }
-
-    // For gif variant, preload the image first so the mask is ready
-    // before the view transition starts (prevents flash)
-    if (animVariant === "gif" && animUrl) {
-      const img = new Image()
-      img.onload = startTransition
-      img.onerror = startTransition // proceed anyway if load fails
-      img.src = animUrl
-    } else {
-      startTransition()
+    try {
+      document.startViewTransition(switchTheme)
+    } catch {
+      switchTheme()
     }
   }, [mounted, resolvedTheme, setTheme, variant, start, url, randomize, getRandomAnimation, updateStyles])
 
