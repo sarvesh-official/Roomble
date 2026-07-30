@@ -11,38 +11,7 @@ interface Animation {
   css: string
 }
 
-const getPositionCoords = (position: AnimationStart) => {
-  switch (position) {
-    case "top-left":
-      return { cx: "0", cy: "0" }
-    case "top-right":
-      return { cx: "40", cy: "0" }
-    case "bottom-left":
-      return { cx: "0", cy: "40" }
-    case "bottom-right":
-      return { cx: "40", cy: "40" }
-  }
-}
-
-const generateSVG = (variant: AnimationVariant, start: AnimationStart) => {
-  const positionCoords = getPositionCoords(start)
-  if (!positionCoords) {
-    throw new Error(`Invalid start position: ${start}`)
-  }
-  const { cx, cy } = positionCoords
-
-  if (variant === "circle") {
-    return `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="${cx}" cy="${cy}" r="20" fill="white"/></svg>`
-  }
-
-  if (variant === "circle-blur") {
-    return `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><defs><filter id="blur"><feGaussianBlur stdDeviation="2"/></filter></defs><circle cx="${cx}" cy="${cy}" r="18" fill="white" filter="url(%23blur)"/></svg>`
-  }
-
-  return ""
-}
-
-const getTransformOrigin = (start: AnimationStart) => {
+const getClipOrigin = (start: AnimationStart) => {
   switch (start) {
     case "top-left":
       return "top left"
@@ -58,35 +27,30 @@ const getTransformOrigin = (start: AnimationStart) => {
 export const createAnimation = (
   variant: AnimationVariant,
   start: AnimationStart,
-  url?: string
+  _url?: string
 ): Animation => {
-  const svg = generateSVG(variant, start)
-  const transformOrigin = getTransformOrigin(start)
+  const origin = getClipOrigin(start)
 
   if (variant === "polygon") {
     return {
       name: `${variant}-${start}`,
       css: `
-       ::view-transition-group(root) {
+      ::view-transition-group(root) {
         animation-duration: 0.7s;
-        animation-timing-function: var(--expo-out);
-      }
-            
-      ::view-transition-new(root) {
-        animation-name: reveal-light;
-        z-index: 1;
       }
 
       ::view-transition-old(root),
       .dark::view-transition-old(root) {
         animation: none;
-        z-index: 0;
-      }
-      .dark::view-transition-new(root) {
-        animation-name: reveal-dark;
+        z-index: 1;
       }
 
-      @keyframes reveal-dark {
+      ::view-transition-new(root) {
+        animation: reveal-polygon 0.7s ease-out;
+        z-index: 2;
+      }
+
+      @keyframes reveal-polygon {
         from {
           clip-path: polygon(50% -71%, -50% 71%, -50% 71%, 50% -71%);
         }
@@ -94,77 +58,76 @@ export const createAnimation = (
           clip-path: polygon(50% -71%, -50% 71%, 50% 171%, 171% 50%);
         }
       }
-
-      @keyframes reveal-light {
-        from {
-          clip-path: polygon(171% 50%, 50% 171%, 50% 171%, 171% 50%);
-        }
-        to {
-          clip-path: polygon(171% 50%, 50% 171%, -50% 71%, 50% -71%);
-        }
-      }
       `,
     }
   }
-  // Center animation removed
+
   if (variant === "gif") {
     return {
       name: `${variant}-${start}`,
       css: `
       ::view-transition-group(root) {
-  animation-timing-function: var(--expo-in);
-}
+        animation-duration: 3s;
+      }
 
-::view-transition-new(root) {
-  mask: url('${url}') center / 0 no-repeat;
-  animation: scale 3s;
-  z-index: 1;
-}
+      ::view-transition-old(root),
+      .dark::view-transition-old(root) {
+        animation: none;
+        z-index: 1;
+      }
 
-::view-transition-old(root),
-.dark::view-transition-old(root) {
-  animation: none;
-  z-index: 0;
-}
+      ::view-transition-new(root) {
+        animation: reveal-gif 3s ease-in;
+        z-index: 2;
+      }
 
-@keyframes scale {
-  0% {
-    mask-size: 0;
-  }
-  10% {
-    mask-size: 50vmax;
-  }
-  90% {
-    mask-size: 50vmax;
-  }
-  100% {
-    mask-size: 2000vmax;
-  }
-}`,
+      @keyframes reveal-gif {
+        from {
+          clip-path: circle(0% at ${origin});
+        }
+        10% {
+          clip-path: circle(50% at ${origin});
+        }
+        90% {
+          clip-path: circle(50% at ${origin});
+        }
+        to {
+          clip-path: circle(200% at ${origin});
+        }
+      }
+      `,
     }
   }
+
+  // circle and circle-blur both use clip-path circle
+  const blurRadius = variant === "circle-blur" ? "12px" : "0"
 
   return {
     name: `${variant}-${start}`,
     css: `
       ::view-transition-group(root) {
-        animation-timing-function: var(--expo-out);
+        animation-duration: 0.7s;
       }
-      ::view-transition-new(root) {
-        mask: url('${svg}') ${start.replace("-", " ")} / 0 no-repeat;
-        mask-origin: content-box;
-        animation: scale-${start} 1s;
-        transform-origin: ${transformOrigin};
-        z-index: 1;
-      }
+
       ::view-transition-old(root),
       .dark::view-transition-old(root) {
         animation: none;
-        z-index: 0;
+        z-index: 1;
       }
-      @keyframes scale-${start} {
+
+      ::view-transition-new(root) {
+        animation: reveal-${start} 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 2;
+      }
+
+      @keyframes reveal-${start} {
+        from {
+          clip-path: circle(0% at ${origin});
+          filter: blur(${blurRadius});
+        }
         to {
-          mask-size: 350vmax;
+          clip-path: circle(150% at ${origin});
+          filter: blur(${blurRadius});
         }
       }
     `,
