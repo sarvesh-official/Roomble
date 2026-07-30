@@ -67,23 +67,20 @@ export const createAnimation = (
       name: `${variant}-${start}`,
       css: `
       ::view-transition-group(root) {
-        animation-duration: 3s;
         animation-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
-      }
-
-      ::view-transition-old(root),
-      .dark::view-transition-old(root) {
-        animation: none;
-        z-index: 1;
       }
 
       ::view-transition-new(root) {
         mask: url('${url}') center / 0 no-repeat;
-        animation: reveal-gif-${start} 3s cubic-bezier(0.7, 0, 0.84, 0);
-        z-index: 2;
+        animation: scale 3s;
       }
 
-      @keyframes reveal-gif-${start} {
+      ::view-transition-old(root),
+      .dark::view-transition-old(root) {
+        animation: scale 3s;
+      }
+
+      @keyframes scale {
         0% {
           mask-size: 0;
         }

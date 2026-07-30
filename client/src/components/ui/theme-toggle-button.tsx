@@ -106,10 +106,23 @@ export function ThemeToggleButton({
       return
     }
 
-    try {
-      document.startViewTransition(switchTheme)
-    } catch {
-      switchTheme()
+    const startTransition = () => {
+      try {
+        document.startViewTransition(switchTheme)
+      } catch {
+        switchTheme()
+      }
+    }
+
+    // For gif variant, preload the image first so the mask is ready
+    // before the view transition starts (prevents flash)
+    if (animVariant === "gif" && animUrl) {
+      const img = new Image()
+      img.onload = startTransition
+      img.onerror = startTransition // proceed anyway if load fails
+      img.src = animUrl
+    } else {
+      startTransition()
     }
   }, [mounted, resolvedTheme, setTheme, variant, start, url, randomize, getRandomAnimation, updateStyles])
 
