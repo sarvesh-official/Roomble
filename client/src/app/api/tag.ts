@@ -1,14 +1,15 @@
 import { Tag } from "@/types/tag";
 import { createApiClient } from "./apiClient";
 import { useAuth } from "@clerk/nextjs";
+import { useCallback, useMemo } from "react";
 
 export const useTagApi = () => {
   const { getToken } = useAuth();
-  const { apiRequest } = createApiClient(() => getToken());
+  const { apiRequest } = useMemo(() => createApiClient(() => getToken()), [getToken]);
 
-  const getTags = async (categoryOnly?: boolean): Promise<Tag[]> => {
+  const getTags = useCallback(async (categoryOnly?: boolean): Promise<Tag[]> => {
     let endpoint = "/api/tags";
-    
+
     if (categoryOnly) {
       endpoint += `?categoryOnly=true`;
     }
@@ -18,17 +19,16 @@ export const useTagApi = () => {
     });
 
     return response.json();
-  };
+  }, [apiRequest]);
 
-
-  const createTag = async (name: string, isCategory: boolean = false): Promise<Tag> => {
+  const createTag = useCallback(async (name: string, isCategory: boolean = false): Promise<Tag> => {
     const response = await apiRequest("/api/tags", {
       method: 'POST',
       body: JSON.stringify({ name, isCategory }),
     });
 
     return response.json();
-  };
+  }, [apiRequest]);
 
   return { getTags, createTag };
 };
